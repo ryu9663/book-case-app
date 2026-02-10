@@ -36,12 +36,10 @@ async function deleteBook(id: number): Promise<void> {
 }
 
 // ----- Hooks -----
-export function useBooks(userId?: number) {
+export function useBooks() {
   return useQuery({
     queryKey: bookKeys.all,
     queryFn: fetchBooks,
-    select: (books) =>
-      userId ? books.filter((b) => b.userId === userId) : books,
   });
 }
 

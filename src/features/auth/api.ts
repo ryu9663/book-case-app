@@ -1,10 +1,10 @@
 import { apiClient } from '@/lib/api/client';
 import { endpoints } from '@/lib/api/endpoints';
 import type { User } from '@/types/models';
-import type { CreateUserDto } from '@/types/api';
+import type { CreateUserDto, LoginDto, AuthTokens } from '@/types/api';
 
-export async function fetchUsers(): Promise<User[]> {
-  const { data } = await apiClient.get<User[]>(endpoints.users);
+export async function loginUser(dto: LoginDto): Promise<AuthTokens> {
+  const { data } = await apiClient.post<AuthTokens>(endpoints.login, dto);
   return data;
 }
 
@@ -13,7 +13,11 @@ export async function createUser(dto: CreateUserDto): Promise<User> {
   return data;
 }
 
-export async function findUserByEmail(email: string): Promise<User | null> {
-  const users = await fetchUsers();
-  return users.find((u) => u.email === email) ?? null;
+export async function refreshToken(): Promise<AuthTokens> {
+  const { data } = await apiClient.post<AuthTokens>(endpoints.refresh);
+  return data;
+}
+
+export async function logoutUser(): Promise<void> {
+  await apiClient.post(endpoints.logout);
 }

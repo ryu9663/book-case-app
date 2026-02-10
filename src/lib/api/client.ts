@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { storage } from '@/lib/utils/storage';
 
 export class ApiError extends Error {
   constructor(
@@ -14,6 +15,15 @@ export const apiClient = axios.create({
   baseURL: 'http://192.168.0.4:4000',
   timeout: 10000,
   headers: { 'Content-Type': 'application/json' },
+});
+
+// Request interceptor — attach JWT token
+apiClient.interceptors.request.use(async (config) => {
+  const token = await storage.getAccessToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 // Response interceptor — normalize errors

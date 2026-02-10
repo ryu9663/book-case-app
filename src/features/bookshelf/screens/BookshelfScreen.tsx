@@ -24,8 +24,8 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
 }
 
 export function BookshelfScreen() {
-  const { user, logout } = useAuth();
-  const { data: books, isLoading, error, refetch } = useBooks(user?.id);
+  const { logout } = useAuth();
+  const { data: books, isLoading, error, refetch } = useBooks();
   const deleteBookMutation = useDeleteBook();
 
   const [menuVisible, setMenuVisible] = useState(false);

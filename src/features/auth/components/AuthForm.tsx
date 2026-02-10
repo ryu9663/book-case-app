@@ -37,16 +37,14 @@ export function AuthForm({ mode, onSubmit, isLoading, error }: Props) {
         style={styles.input}
       />
 
-      {!isLogin && (
-        <TextInput
-          label="비밀번호"
-          value={password}
-          onChangeText={setPassword}
-          mode="outlined"
-          secureTextEntry
-          style={styles.input}
-        />
-      )}
+      <TextInput
+        label="비밀번호"
+        value={password}
+        onChangeText={setPassword}
+        mode="outlined"
+        secureTextEntry
+        style={styles.input}
+      />
 
       {error && <Text style={styles.error}>{error}</Text>}
 
@@ -54,7 +52,7 @@ export function AuthForm({ mode, onSubmit, isLoading, error }: Props) {
         mode="contained"
         onPress={handleSubmit}
         loading={isLoading}
-        disabled={isLoading || !email.trim() || (!isLogin && !password)}
+        disabled={isLoading || !email.trim() || !password}
         style={styles.button}
       >
         {isLogin ? '로그인' : '가입하기'}

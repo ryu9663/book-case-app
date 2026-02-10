@@ -9,7 +9,6 @@ import {
 import { TextInput, Button, Text, Snackbar } from 'react-native-paper';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useReview, useCreateReview, useUpdateReview } from '../api';
-import { useAuth } from '@/features/auth/auth-context';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { colors } from '@/lib/theme/colors';
 
@@ -22,7 +21,6 @@ export function ReviewFormScreen() {
   const reviewId = id ? Number(id) : null;
   const isEdit = !!reviewId;
 
-  const { user } = useAuth();
   const { data: existingReview, isLoading } = useReview(
     bookId,
     reviewId ?? 0,
@@ -46,8 +44,6 @@ export function ReviewFormScreen() {
       setSnackbar('제목과 내용을 입력해주세요.');
       return;
     }
-    if (!user) return;
-
     try {
       if (isEdit && reviewId) {
         await updateReview.mutateAsync({
@@ -59,7 +55,6 @@ export function ReviewFormScreen() {
         await createReview.mutateAsync({
           title,
           content,
-          userId: user.id,
         });
         setSnackbar('독후감이 작성되었습니다!');
       }

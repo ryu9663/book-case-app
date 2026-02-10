@@ -3,9 +3,18 @@ export interface CreateUserDto {
   password: string;
 }
 
+export interface LoginDto {
+  email: string;
+  password: string;
+}
+
+export interface AuthTokens {
+  accessToken: string;
+  refreshToken: string;
+}
+
 export interface CreateBookDto {
   isbn: string;
-  userId: number;
 }
 
 export interface UpdateBookDto {
@@ -16,7 +25,6 @@ export interface UpdateBookDto {
 export interface CreateReviewDto {
   title: string;
   content: string;
-  userId: number;
 }
 
 export interface UpdateReviewDto {

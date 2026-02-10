@@ -8,7 +8,6 @@ import {
 import { TextInput, Button, Text, Snackbar } from 'react-native-paper';
 import { router } from 'expo-router';
 import { useCreateBook } from '@/features/bookshelf/api';
-import { useAuth } from '@/features/auth/auth-context';
 import { colors } from '@/lib/theme/colors';
 
 function isValidISBN(isbn: string): boolean {
@@ -17,7 +16,6 @@ function isValidISBN(isbn: string): boolean {
 }
 
 export function AddBookScreen() {
-  const { user } = useAuth();
   const createBook = useCreateBook();
   const [isbn, setIsbn] = useState('');
   const [error, setError] = useState('');
@@ -29,10 +27,8 @@ export function AddBookScreen() {
       setError('ISBN은 10자리 또는 13자리여야 합니다.');
       return;
     }
-    if (!user) return;
-
     try {
-      await createBook.mutateAsync({ isbn: isbn.replace(/[-\s]/g, ''), userId: user.id });
+      await createBook.mutateAsync({ isbn: isbn.replace(/[-\s]/g, '') });
       setSnackbar('책이 추가되었습니다!');
       setTimeout(() => router.back(), 500);
     } catch {

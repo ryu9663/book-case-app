@@ -1,30 +1,25 @@
-import { View, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
-import { Button } from "react-native-paper";
-import { useState } from "react";
-import { router } from "expo-router";
-import { AuthForm } from "../components/AuthForm";
-import { useAuth } from "../auth-context";
-import { findUserByEmail } from "../api";
-import { colors } from "@/lib/theme/colors";
+import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { Button } from 'react-native-paper';
+import { useState } from 'react';
+import { router } from 'expo-router';
+import { AuthForm } from '../components/AuthForm';
+import { useAuth } from '../auth-context';
+import { loginUser } from '../api';
+import { colors } from '@/lib/theme/colors';
 
 export function LoginScreen() {
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleLogin = async (email: string) => {
+  const handleLogin = async (email: string, password: string) => {
     setError(null);
     setIsLoading(true);
     try {
-      const user = await findUserByEmail(email);
-      if (user) {
-        await login(user);
-      } else {
-        setError("계정이 없습니다. 회원가입하시겠습니까?");
-      }
-    } catch (error) {
-      console.log(error);
-      setError("서버에 연결할 수 없습니다.");
+      const tokens = await loginUser({ email, password });
+      await login(tokens);
+    } catch {
+      setError('이메일 또는 비밀번호가 올바르지 않습니다.');
     } finally {
       setIsLoading(false);
     }
@@ -33,7 +28,7 @@ export function LoginScreen() {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View style={styles.header}>
         <View style={styles.logoContainer}>
@@ -53,7 +48,7 @@ export function LoginScreen() {
       <View style={styles.footer}>
         <Button
           mode="text"
-          onPress={() => router.push("/(auth)/register")}
+          onPress={() => router.push('/(auth)/register')}
           textColor={colors.shelfBrown}
         >
           계정이 없으신가요? 회원가입
@@ -67,14 +62,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.cream,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   header: {
-    alignItems: "center",
+    alignItems: 'center',
     marginBottom: 24,
   },
   logoContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 4,
   },
   bookIcon: {
@@ -92,7 +87,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.spineColors[3],
   },
   footer: {
-    alignItems: "center",
+    alignItems: 'center',
     paddingBottom: 32,
   },
 });

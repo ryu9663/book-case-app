@@ -2,7 +2,7 @@ import { StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { useState } from 'react';
 import { AuthForm } from '../components/AuthForm';
 import { useAuth } from '../auth-context';
-import { createUser } from '../api';
+import { createUser, loginUser } from '../api';
 import { colors } from '@/lib/theme/colors';
 
 export function RegisterScreen() {
@@ -18,8 +18,9 @@ export function RegisterScreen() {
     }
     setIsLoading(true);
     try {
-      const user = await createUser({ email, password });
-      await login(user);
+      await createUser({ email, password });
+      const tokens = await loginUser({ email, password });
+      await login(tokens);
     } catch {
       setError('회원가입에 실패했습니다. 다시 시도해주세요.');
     } finally {
