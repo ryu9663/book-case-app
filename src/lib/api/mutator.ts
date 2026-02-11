@@ -8,7 +8,7 @@ const REFRESH_URL = '/auth/refresh';
 let refreshPromise: Promise<string | void> | null = null;
 
 export const AXIOS_INSTANCE = Axios.create({
-  baseURL: 'http://192.168.0.4:4000',
+  baseURL: process.env.EXPO_PUBLIC_API_URL,
   timeout: 10000,
   headers: { 'Content-Type': 'application/json' },
 });
