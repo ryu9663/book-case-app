@@ -1,7 +1,7 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 import { Text, Card } from 'react-native-paper';
 import { colors } from '@/lib/theme/colors';
-import type { Book } from '@/types/models';
+import type { Book } from '@/api/generated/models';
 
 interface Props {
   book: Book;
@@ -26,18 +26,32 @@ export function BookInfoCard({ book }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    marginTop: 16,
-    backgroundColor: colors.warmWhite,
+    marginTop: 24,
+    backgroundColor: colors.paper, // Vintage paper
+    borderWidth: 1,
+    borderColor: '#D7CCC8',
+    // Paper shadow
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
+    borderRadius: 2, // Less rounded, more like card
   },
   label: {
     fontSize: 12,
-    color: colors.textMuted,
+    color: colors.textMuted, // Faded ink
     marginTop: 12,
+    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
   },
   value: {
-    fontSize: 16,
-    color: colors.textPrimary,
+    fontSize: 18,
+    color: colors.textPrimary, // Dark ink
     fontWeight: '500',
-    marginTop: 2,
+    marginTop: 4,
+    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
   },
 });

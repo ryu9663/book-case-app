@@ -1,4 +1,4 @@
-import { StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { useState } from 'react';
 import { AuthForm } from '../components/AuthForm';
 import { useAuth } from '../auth-context';
@@ -33,12 +33,14 @@ export function RegisterScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <AuthForm
-        mode="register"
-        onSubmit={handleRegister}
-        isLoading={isLoading}
-        error={error}
-      />
+      <View style={styles.card}>
+        <AuthForm
+          mode="register"
+          onSubmit={handleRegister}
+          isLoading={isLoading}
+          error={error}
+        />
+      </View>
     </KeyboardAvoidingView>
   );
 }
@@ -46,7 +48,21 @@ export function RegisterScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.cream,
+    backgroundColor: colors.shelfBrown, // Desk
     justifyContent: 'center',
+    padding: 24,
+  },
+  card: {
+    backgroundColor: colors.paper,
+    borderRadius: 2,
+    paddingVertical: 32,
+    paddingHorizontal: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 8,
+    borderWidth: 1,
+    borderColor: '#D7CCC8',
   },
 });

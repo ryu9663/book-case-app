@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet, Platform } from 'react-native';
 import { Appbar, Snackbar } from 'react-native-paper';
 import { router, useLocalSearchParams } from 'expo-router';
 import { BookOpenAnimation } from '../components/BookOpenAnimation';
 import { BookCover } from '../components/BookCover';
 import { BookInfoCard } from '../components/BookInfoCard';
 import { BookEditDialog } from '../components/BookEditDialog';
-import { useBook, useUpdateBook, useDeleteBook } from '../api';
+import { useBookControllerFindOne, useBookControllerUpdate, useBookControllerRemove } from '@/api/generated/books/books';
 import { ReviewList } from '@/features/review/components/ReviewList';
 import { useAuth } from '@/features/auth/auth-context';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
@@ -18,9 +18,9 @@ export function BookDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const bookId = Number(id);
   const { user } = useAuth();
-  const { data: book, isLoading, error, refetch } = useBook(bookId);
-  const updateBook = useUpdateBook();
-  const deleteBook = useDeleteBook();
+  const { data: book, isLoading, error, refetch } = useBookControllerFindOne(bookId);
+  const updateBook = useBookControllerUpdate();
+  const deleteBook = useBookControllerRemove();
 
   const [editVisible, setEditVisible] = useState(false);
   const [deleteVisible, setDeleteVisible] = useState(false);
@@ -28,7 +28,7 @@ export function BookDetailScreen() {
 
   const handleSave = async (title: string, author: string) => {
     try {
-      await updateBook.mutateAsync({ id: bookId, dto: { title, author } });
+      await updateBook.mutateAsync({ id: bookId, data: { title, author } });
       setEditVisible(false);
       setSnackbar('수정되었습니다.');
     } catch {
@@ -38,7 +38,7 @@ export function BookDetailScreen() {
 
   const handleDelete = async () => {
     try {
-      await deleteBook.mutateAsync(bookId);
+      await deleteBook.mutateAsync({ id: bookId });
       router.back();
     } catch {
       setSnackbar('삭제에 실패했습니다.');
@@ -107,15 +107,19 @@ export function BookDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.cream,
+    backgroundColor: colors.shelfBrown, // Desk texture
   },
   header: {
     backgroundColor: colors.shelfBrown,
+    elevation: 0,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.1)',
   },
   headerTitle: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-    fontSize: 16,
+    color: '#FFF8E1',
+    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
+    fontWeight: '700', 
+    fontSize: 20,
   },
   scrollContent: {
     padding: 16,
@@ -123,7 +127,13 @@ const styles = StyleSheet.create({
   },
   coverSection: {
     alignItems: 'center',
-    paddingVertical: 24,
+    paddingVertical: 32,
+    // Add a spotlight effect or shadow for the book sitting on desk
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+    elevation: 10,
   },
   reviewSection: {
     marginTop: 24,

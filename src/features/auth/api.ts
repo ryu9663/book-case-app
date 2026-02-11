@@ -1,23 +1,37 @@
-import { apiClient } from '@/lib/api/client';
-import { endpoints } from '@/lib/api/endpoints';
-import type { User } from '@/types/models';
-import type { CreateUserDto, LoginDto, AuthTokens } from '@/types/api';
+import { customInstance } from '@/lib/api/mutator';
+import type { LoginDto, CreateUserDto, UserResponseDto } from '@/api/generated/models';
 
-export async function loginUser(dto: LoginDto): Promise<AuthTokens> {
-  const { data } = await apiClient.post<AuthTokens>(endpoints.login, dto);
-  return data;
+export interface AuthTokens {
+  accessToken: string;
+  refreshToken: string;
 }
 
-export async function createUser(dto: CreateUserDto): Promise<User> {
-  const { data } = await apiClient.post<User>(endpoints.users, dto);
-  return data;
+export async function loginUser(dto: LoginDto): Promise<AuthTokens> {
+  return customInstance<AuthTokens>({
+    url: '/auth/login',
+    method: 'POST',
+    data: dto,
+  });
+}
+
+export async function createUser(dto: CreateUserDto): Promise<UserResponseDto> {
+  return customInstance<UserResponseDto>({
+    url: '/users',
+    method: 'POST',
+    data: dto,
+  });
 }
 
 export async function refreshToken(): Promise<AuthTokens> {
-  const { data } = await apiClient.post<AuthTokens>(endpoints.refresh);
-  return data;
+  return customInstance<AuthTokens>({
+    url: '/auth/refresh',
+    method: 'POST',
+  });
 }
 
 export async function logoutUser(): Promise<void> {
-  await apiClient.post(endpoints.logout);
+  return customInstance<void>({
+    url: '/auth/logout',
+    method: 'POST',
+  });
 }

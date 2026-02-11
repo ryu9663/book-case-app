@@ -1,7 +1,7 @@
 import { View, StyleSheet } from 'react-native';
 import { BookSpine } from './BookSpine';
 import { colors } from '@/lib/theme/colors';
-import type { Book } from '@/types/models';
+import type { Book } from '@/api/generated/models';
 
 interface Props {
   books: Book[];
@@ -35,46 +35,52 @@ export function BookshelfRow({ books, onBookPress, onBookLongPress }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 8,
+    marginBottom: 24, // More space between shelves
   },
   booksArea: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     paddingHorizontal: 16,
-    minHeight: 140,
+    minHeight: 145,
+    zIndex: 10, // Ensure books are above shelf shadow
+    marginBottom: -4, // Slight overlap with shelf top to look "grounded"
   },
   shelfBoard: {
-    height: 16,
+    height: 18,
     backgroundColor: colors.shelfBrown,
-    marginHorizontal: 8,
-    borderRadius: 2,
+    marginHorizontal: 12,
+    borderTopLeftRadius: 2,
+    borderTopRightRadius: 2,
+    borderBottomLeftRadius: 4,
+    borderBottomRightRadius: 4,
     position: 'relative',
-    // Shadow
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 6,
+    // Strong shadow for depth
+    shadowColor: '#2C1810',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    elevation: 8,
+    borderColor: '#3E2723',
+    borderWidth: 1,
   },
   shelfHighlight: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    height: 4,
-    backgroundColor: colors.shelfHighlight,
+    height: 2,
+    backgroundColor: 'rgba(255,255,255,0.1)', // Subtle top lighting
     borderTopLeftRadius: 2,
     borderTopRightRadius: 2,
-    opacity: 0.6,
   },
   shelfLip: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    height: 4,
-    backgroundColor: colors.shelfDark,
-    borderBottomLeftRadius: 2,
-    borderBottomRightRadius: 2,
+    height: 6,
+    backgroundColor: 'rgba(0,0,0,0.2)', // Shadow gradient at bottom
+    borderBottomLeftRadius: 4,
+    borderBottomRightRadius: 4,
   },
 });

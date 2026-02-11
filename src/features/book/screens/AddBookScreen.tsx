@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import { TextInput, Button, Text, Snackbar } from 'react-native-paper';
 import { router } from 'expo-router';
-import { useCreateBook } from '@/features/bookshelf/api';
+import { useBookControllerCreate } from '@/api/generated/books/books';
 import { colors } from '@/lib/theme/colors';
 
 function isValidISBN(isbn: string): boolean {
@@ -16,7 +16,7 @@ function isValidISBN(isbn: string): boolean {
 }
 
 export function AddBookScreen() {
-  const createBook = useCreateBook();
+  const createBook = useBookControllerCreate();
   const [isbn, setIsbn] = useState('');
   const [error, setError] = useState('');
   const [snackbar, setSnackbar] = useState('');
@@ -28,7 +28,7 @@ export function AddBookScreen() {
       return;
     }
     try {
-      await createBook.mutateAsync({ isbn: isbn.replace(/[-\s]/g, '') });
+      await createBook.mutateAsync({ data: { isbn: isbn.replace(/[-\s]/g, '') } });
       setSnackbar('책이 추가되었습니다!');
       setTimeout(() => router.back(), 500);
     } catch {
@@ -41,18 +41,21 @@ export function AddBookScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <View style={styles.content}>
-        <Text style={styles.title}>책 추가</Text>
-        <Text style={styles.subtitle}>ISBN 번호를 입력하세요</Text>
+      <View style={styles.card}>
+        <Text style={styles.title}>새 책 등록</Text>
+        <Text style={styles.subtitle}>ISBN 코드를 입력하여 책을 추가합니다.</Text>
 
         <TextInput
           label="ISBN"
           value={isbn}
           onChangeText={setIsbn}
-          mode="outlined"
+          mode="flat"
+          underlineColor={colors.shelfHighlight}
+          activeUnderlineColor={colors.shelfBrown}
           keyboardType="number-pad"
-          placeholder="978-0-000-00000-0"
+          placeholder="978-..."
           style={styles.input}
+          theme={{ colors: { background: 'transparent' } }}
         />
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
@@ -63,8 +66,9 @@ export function AddBookScreen() {
           loading={createBook.isPending}
           disabled={createBook.isPending || !isbn.trim()}
           style={styles.button}
+          labelStyle={styles.buttonLabel}
         >
-          추가하기
+          책장에 꽂기
         </Button>
       </View>
 
@@ -72,8 +76,9 @@ export function AddBookScreen() {
         visible={!!snackbar}
         onDismiss={() => setSnackbar('')}
         duration={1500}
+        style={{ backgroundColor: colors.shelfDark }}
       >
-        {snackbar}
+        <Text style={{ color: colors.paper }}>{snackbar}</Text>
       </Snackbar>
     </KeyboardAvoidingView>
   );
@@ -82,35 +87,61 @@ export function AddBookScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.cream,
-  },
-  content: {
-    flex: 1,
-    padding: 24,
+    backgroundColor: colors.shelfBrown, // Desk
     justifyContent: 'center',
+    padding: 24,
+  },
+  card: {
+    backgroundColor: colors.paper, // Note card
+    padding: 32,
+    borderRadius: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 6,
+    borderWidth: 1,
+    borderColor: '#D7CCC8',
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: '700',
     color: colors.textPrimary,
-    marginBottom: 4,
+    marginBottom: 8,
+    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 14,
     color: colors.textMuted,
     marginBottom: 32,
+    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
+    textAlign: 'center',
   },
   input: {
     marginBottom: 16,
-    backgroundColor: colors.warmWhite,
+    backgroundColor: 'transparent',
+    fontSize: 18,
+    fontFamily: Platform.select({ ios: 'Courier New', android: 'monospace', default: 'monospace' }), // Monospace for ISBN
+    color: colors.textPrimary,
   },
   error: {
     color: colors.error,
     fontSize: 13,
-    marginBottom: 12,
+    marginBottom: 16,
+    textAlign: 'center',
+    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
   },
   button: {
-    marginTop: 8,
-    backgroundColor: colors.shelfBrown,
+    marginTop: 16,
+    backgroundColor: colors.shelfDark,
+    borderRadius: 8,
+    paddingVertical: 6,
+  },
+  buttonLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: colors.warmWhite,
+    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
   },
 });

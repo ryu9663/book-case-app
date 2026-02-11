@@ -6,15 +6,15 @@ import {
   useCallback,
   type ReactNode,
 } from 'react';
-import type { User } from '@/types/models';
-import type { AuthTokens } from '@/types/api';
+import type { UserResponseDto } from '@/api/generated/models';
+import type { AuthTokens } from '@/features/auth/api';
 import { storage } from '@/lib/utils/storage';
 
 interface AuthState {
-  user: User | null;
+  user: UserResponseDto | null;
   isLoading: boolean;
   login: (tokens: AuthTokens) => Promise<void>;
-  loginWithUser: (user: User, tokens: AuthTokens) => Promise<void>;
+  loginWithUser: (user: UserResponseDto, tokens: AuthTokens) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -27,14 +27,14 @@ function decodeJwtPayload(token: string): { sub: number; email: string } {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserResponseDto | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       try {
         const [storedUser, accessToken] = await Promise.all([
-          storage.getUser<User>(),
+          storage.getUser<UserResponseDto>(),
           storage.getAccessToken(),
         ]);
         if (storedUser && accessToken) {
@@ -49,13 +49,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (tokens: AuthTokens) => {
     await storage.setTokens(tokens.accessToken, tokens.refreshToken);
     const payload = decodeJwtPayload(tokens.accessToken);
-    const u: User = { id: payload.sub, email: payload.email };
+    const u: UserResponseDto = { id: payload.sub, email: payload.email };
     await storage.setUser(u);
     setUser(u);
   }, []);
 
   const loginWithUser = useCallback(
-    async (u: User, tokens: AuthTokens) => {
+    async (u: UserResponseDto, tokens: AuthTokens) => {
       await storage.setTokens(tokens.accessToken, tokens.refreshToken);
       await storage.setUser(u);
       setUser(u);

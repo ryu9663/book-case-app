@@ -16,7 +16,12 @@ const styles = StyleSheet.create({
   fab: {
     position: "absolute",
     right: 20,
-    bottom: 70,
-    backgroundColor: colors.shelfBrown,
+    bottom: 30, // Adjusted position
+    backgroundColor: colors.shelfDark, // Darker wood for contrast
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
 });

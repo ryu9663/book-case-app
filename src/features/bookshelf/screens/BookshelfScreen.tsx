@@ -1,17 +1,17 @@
 import { useMemo, useState, useCallback } from 'react';
-import { View, ScrollView, RefreshControl, StyleSheet } from 'react-native';
+import { View, ScrollView, RefreshControl, StyleSheet, Platform } from 'react-native';
 import { Appbar, Menu, Snackbar } from 'react-native-paper';
 import { router } from 'expo-router';
 import { BookshelfRow } from '../components/BookshelfRow';
 import { EmptyShelf } from '../components/EmptyShelf';
 import { AddBookFAB } from '../components/AddBookFAB';
-import { useBooks, useDeleteBook } from '../api';
+import { useBookControllerFindAll, useBookControllerRemove } from '@/api/generated/books/books';
 import { useAuth } from '@/features/auth/auth-context';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { ErrorScreen } from '@/components/ui/ErrorScreen';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { colors } from '@/lib/theme/colors';
-import type { Book } from '@/types/models';
+import type { Book } from '@/api/generated/models';
 
 const BOOKS_PER_ROW = 4;
 
@@ -25,8 +25,8 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
 
 export function BookshelfScreen() {
   const { logout } = useAuth();
-  const { data: books, isLoading, error, refetch } = useBooks();
-  const deleteBookMutation = useDeleteBook();
+  const { data: books, isLoading, error, refetch } = useBookControllerFindAll();
+  const deleteBookMutation = useBookControllerRemove();
 
   const [menuVisible, setMenuVisible] = useState(false);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
@@ -50,7 +50,7 @@ export function BookshelfScreen() {
   const handleDelete = async () => {
     if (!selectedBook) return;
     try {
-      await deleteBookMutation.mutateAsync(selectedBook.id);
+      await deleteBookMutation.mutateAsync({ id: selectedBook.id });
       setSnackbar('책이 삭제되었습니다.');
     } catch {
       setSnackbar('삭제에 실패했습니다.');
@@ -136,20 +136,28 @@ export function BookshelfScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.cream,
+    backgroundColor: colors.cream, // Warm beige
   },
   header: {
     backgroundColor: colors.shelfBrown,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
   },
   headerTitle: {
-    color: '#FFFFFF',
+    color: '#FFF8E1', // Old Lace
+    // Use serif for a classic book feel
+    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
     fontWeight: '700',
+    fontSize: 22,
   },
   scroll: {
     flex: 1,
   },
   scrollContent: {
-    paddingTop: 16,
-    paddingBottom: 80,
+    paddingTop: 24,
+    paddingBottom: 100,
   },
 });

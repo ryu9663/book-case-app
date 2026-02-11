@@ -1,4 +1,4 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 import { Text } from 'react-native-paper';
 import { getSpineColor } from '@/lib/theme/colors';
 
@@ -12,18 +12,24 @@ export function BookCover({ title, author }: Props) {
 
   return (
     <View style={[styles.cover, { backgroundColor: bgColor }]}>
-      <View style={styles.spine} />
-      <View style={styles.content}>
-        <Text style={styles.title} numberOfLines={3}>
-          {title}
-        </Text>
-        <View style={styles.divider} />
-        <Text style={styles.author} numberOfLines={2}>
-          {author}
-        </Text>
+      {/* Spine lighting effect */}
+      <View style={styles.spineHighlight} />
+      
+      {/* Decorative Frame */}
+      <View style={styles.frame}>
+        <View style={styles.content}>
+          <Text style={styles.title} numberOfLines={3}>
+            {title}
+          </Text>
+          <View style={styles.ornament} />
+          <Text style={styles.author} numberOfLines={2}>
+            {author}
+          </Text>
+        </View>
       </View>
-      <View style={styles.cornerTopLeft} />
-      <View style={styles.cornerBottomRight} />
+
+      {/* Book thickness effect (pages on right) */}
+      <View style={styles.pagesRight} />
     </View>
   );
 }
@@ -31,69 +37,77 @@ export function BookCover({ title, author }: Props) {
 const styles = StyleSheet.create({
   cover: {
     width: 160,
-    height: 220,
-    borderRadius: 4,
-    padding: 16,
+    height: 230,
+    borderRadius: 4, // Slight rounding
+    borderTopRightRadius: 6,
+    borderBottomRightRadius: 6,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
-    // Book shadow
     shadowColor: '#000',
-    shadowOffset: { width: 4, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    shadowOffset: { width: 5, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    elevation: 10,
+    overflow: 'hidden',
   },
-  spine: {
+  spineHighlight: {
     position: 'absolute',
     left: 0,
     top: 0,
     bottom: 0,
-    width: 8,
-    backgroundColor: 'rgba(0,0,0,0.2)',
-    borderTopLeftRadius: 4,
-    borderBottomLeftRadius: 4,
+    width: 24,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRightWidth: 1,
+    borderRightColor: 'rgba(0,0,0,0.2)',
+  },
+  frame: {
+    borderWidth: 2,
+    borderColor: 'rgba(255,236,179, 0.5)', // Gold foil
+    padding: 4,
+    width: '85%',
+    height: '85%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   content: {
     alignItems: 'center',
-    paddingHorizontal: 8,
+    paddingHorizontal: 12,
   },
   title: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '800',
+    color: '#FFF8E1', // Old Paper
+    fontSize: 18,
+    fontWeight: '700',
     textAlign: 'center',
-    lineHeight: 22,
+    lineHeight: 26,
+    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
+    textShadowColor: 'rgba(0,0,0,0.5)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+    marginBottom: 16,
   },
-  divider: {
+  ornament: {
     width: 40,
-    height: 1,
-    backgroundColor: 'rgba(255,255,255,0.5)',
+    height: 2,
+    backgroundColor: 'rgba(255,236,179, 0.6)',
     marginVertical: 12,
   },
   author: {
-    color: 'rgba(255,255,255,0.8)',
-    fontSize: 12,
+    color: 'rgba(255,255,255,0.9)',
+    fontSize: 14,
+    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
     textAlign: 'center',
+    fontStyle: 'italic',
   },
-  cornerTopLeft: {
+  pagesRight: {
     position: 'absolute',
-    top: 8,
-    left: 16,
-    width: 20,
-    height: 20,
-    borderTopWidth: 1,
+    right: 2,
+    top: 6,
+    bottom: 6,
+    width: 4,
+    backgroundColor: '#F5F5DC', // Pages color
     borderLeftWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
-  },
-  cornerBottomRight: {
-    position: 'absolute',
-    bottom: 8,
-    right: 8,
-    width: 20,
-    height: 20,
-    borderBottomWidth: 1,
-    borderRightWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
+    borderLeftColor: 'rgba(0,0,0,0.1)',
+    zIndex: -1, 
   },
 });

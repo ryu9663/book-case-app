@@ -1,39 +1,43 @@
 export const colors = {
-  // Shelf / wood tones
-  shelfBrown: '#8B6914',
-  shelfDark: '#6B4F12',
-  shelfLight: '#A67C2E',
-  shelfHighlight: '#C4A55A',
+  // Shelf / wood tones (Deep Walnut / Oak)
+  shelfBrown: '#5D4037', // Deep wood
+  shelfDark: '#3E2723',  // Shadow
+  shelfLight: '#8D6E63', // Highlight / Lighter wood
+  shelfHighlight: '#A1887F', // Top edge highlight
+  
+  // Backgrounds (Parchment / Warm Paper)
+  cream: '#F5F5DC',      // Main background (Beige)
+  warmWhite: '#FAF3E0',  // Cards / content areas
+  paper: '#FFF8E1',      // Book pages / notes
+  
+  // Text (Ink / Contrast)
+  textPrimary: '#3E2723',   // Dark Brown Ink
+  textSecondary: '#5D4037', // Medium Brown Ink
+  textMuted: '#8D6E63',     // Faded Ink
+  
+  // Accents
+  accentGreen: '#558B2F', // Forest Green
+  accentGold: '#FFB300',  // Gold Foil
 
-  // Backgrounds
-  cream: '#F5F0E8',
-  warmWhite: '#FDF8F0',
-  paper: '#FFFDF7',
-
-  // Text
-  textPrimary: '#2C1810',
-  textSecondary: '#5C4033',
-  textMuted: '#8B7355',
-
-  // Book spine colors
+  // Book spine colors (Vintage / Muted)
   spineColors: [
-    '#C0392B', // red
-    '#2980B9', // blue
-    '#27AE60', // green
-    '#8E44AD', // purple
-    '#D35400', // orange
-    '#16A085', // teal
-    '#2C3E50', // navy
-    '#E74C3C', // bright red
-    '#3498DB', // light blue
-    '#1ABC9C', // aqua
-    '#9B59B6', // violet
-    '#F39C12', // gold
+    '#8D3B3B', // Vintage Red
+    '#3B6E8D', // Muted Blue
+    '#3B8D56', // Forest Green
+    '#6D3B8D', // Plum
+    '#8D5B3B', // Terracotta
+    '#3B8D85', // Teal
+    '#2F3E46', // Charcoal
+    '#A63A3A', // Brick Red
+    '#4A6FA5', // Slate Blue
+    '#457B9D', // Steel Blue
+    '#7D5BA6', // Muted Purple
+    '#D4AF37', // Gold Foil
   ] as const,
 
   // Status
-  error: '#C0392B',
-  success: '#27AE60',
+  error: '#B71C1C',
+  success: '#2E7D32',
 } as const;
 
 export function getSpineColor(title: string): string {

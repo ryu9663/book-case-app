@@ -4,11 +4,11 @@ import { Text, Button, Snackbar } from 'react-native-paper';
 import { router } from 'expo-router';
 import { ReviewCard } from './ReviewCard';
 import { ReviewDeleteDialog } from './ReviewDeleteDialog';
-import { useReviews, useDeleteReview } from '../api';
+import { useReviewControllerFindAll, useReviewControllerRemove } from '@/api/generated/reviews/reviews';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { colors } from '@/lib/theme/colors';
-import type { Review } from '@/types/models';
+import type { Review } from '@/api/generated/models';
 
 interface Props {
   bookId: number;
@@ -16,8 +16,8 @@ interface Props {
 }
 
 export function ReviewList({ bookId, onAddReview }: Props) {
-  const { data: reviews, isLoading } = useReviews(bookId);
-  const deleteReview = useDeleteReview(bookId);
+  const { data: reviews, isLoading } = useReviewControllerFindAll(bookId);
+  const deleteReview = useReviewControllerRemove();
 
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [deleteVisible, setDeleteVisible] = useState(false);
@@ -26,7 +26,7 @@ export function ReviewList({ bookId, onAddReview }: Props) {
   const handleDelete = async () => {
     if (!selectedReview) return;
     try {
-      await deleteReview.mutateAsync(selectedReview.id);
+      await deleteReview.mutateAsync({ bookId, id: selectedReview.id });
       setSnackbar('독후감이 삭제되었습니다.');
     } catch {
       setSnackbar('삭제에 실패했습니다.');
