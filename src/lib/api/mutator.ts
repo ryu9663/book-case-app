@@ -1,5 +1,11 @@
 import Axios, { AxiosRequestConfig } from 'axios';
+import { router } from 'expo-router';
+import { Alert } from 'react-native';
 import { storage } from '@/lib/utils/storage';
+
+const REFRESH_URL = '/auth/refresh';
+
+let refreshPromise: Promise<string | void> | null = null;
 
 export const AXIOS_INSTANCE = Axios.create({
   baseURL: 'http://192.168.0.4:4000',
@@ -8,7 +14,12 @@ export const AXIOS_INSTANCE = Axios.create({
 });
 
 AXIOS_INSTANCE.interceptors.request.use(async (config) => {
-  const token = await storage.getAccessToken();
+  let token: string | null = null;
+  if (config.url === '/auth/refresh') {
+    token = await storage.getRefreshToken();
+  } else {
+    token = await storage.getAccessToken();
+  }
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -17,16 +28,53 @@ AXIOS_INSTANCE.interceptors.request.use(async (config) => {
 
 AXIOS_INSTANCE.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (Axios.isAxiosError(error)) {
-      const status = error.response?.status ?? 500;
-      const message =
-        error.response?.data?.message ?? error.message ?? 'Unknown error';
-      return Promise.reject(new ApiError(status, message));
+  async (error) => {
+    const config = error.config;
+    const status = error.response?.status;
+    if (config && status) {
+      if (
+        config.url === REFRESH_URL ||
+        status !== 401 ||
+        config.sent === true
+      ) {
+        return Promise.reject(error);
+      }
+      config.sent = true;
+
+      const newAccess = await getNewAccessToken();
+      if (newAccess) {
+        config.headers.Authorization = `Bearer ${newAccess}`;
+        return AXIOS_INSTANCE(config);
+      }
+      return Promise.reject(error);
     }
     return Promise.reject(error);
   },
 );
+
+const getNewAccessToken = async (): Promise<string | void> => {
+  if (refreshPromise) return refreshPromise;
+
+  refreshPromise = (async () => {
+    try {
+      const {
+        data: { accessToken, refreshToken },
+      } = await AXIOS_INSTANCE.post('/auth/refresh');
+
+      await storage.setTokens(accessToken, refreshToken);
+
+      return accessToken;
+    } catch {
+      await storage.clear();
+      Alert.alert('세션 만료', '다시 로그인해주세요.', [
+        { text: '확인', onPress: () => router.replace('/(auth)/login') },
+      ]);
+    } finally {
+      refreshPromise = null;
+    }
+  })();
+  return refreshPromise;
+};
 
 export class ApiError extends Error {
   constructor(
