@@ -4,7 +4,12 @@ import { Text, Button, Snackbar } from 'react-native-paper';
 import { router } from 'expo-router';
 import { ReviewCard } from './ReviewCard';
 import { ReviewDeleteDialog } from './ReviewDeleteDialog';
-import { useReviewControllerFindAll, useReviewControllerRemove } from '@/api/generated/reviews/reviews';
+import {
+  useReviewControllerFindAll,
+  useReviewControllerRemove,
+  getReviewControllerFindAllQueryKey,
+} from '@/api/generated/reviews/reviews';
+import { useQueryClient } from '@tanstack/react-query';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { colors } from '@/lib/theme/colors';
@@ -16,6 +21,7 @@ interface Props {
 }
 
 export function ReviewList({ bookId, onAddReview }: Props) {
+  const queryClient = useQueryClient();
   const { data: reviews, isLoading } = useReviewControllerFindAll(bookId);
   const deleteReview = useReviewControllerRemove();
 
@@ -27,6 +33,7 @@ export function ReviewList({ bookId, onAddReview }: Props) {
     if (!selectedReview) return;
     try {
       await deleteReview.mutateAsync({ bookId, id: selectedReview.id });
+      await queryClient.invalidateQueries({ queryKey: getReviewControllerFindAllQueryKey(bookId) });
       setSnackbar('독후감이 삭제되었습니다.');
     } catch {
       setSnackbar('삭제에 실패했습니다.');
@@ -64,9 +71,7 @@ export function ReviewList({ bookId, onAddReview }: Props) {
             key={review.id}
             review={review}
             onEdit={() =>
-              router.push(
-                `/(main)/review/${review.id}?bookId=${bookId}`,
-              )
+              router.push(`/(main)/review/${review.id}?bookId=${bookId}`)
             }
             onDelete={() => {
               setSelectedReview(review);

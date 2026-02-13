@@ -1,13 +1,9 @@
 import { useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
+import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { TextInput, Button, Text, Snackbar } from 'react-native-paper';
+import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
-import { useBookControllerCreate } from '@/api/generated/books/books';
+import { useBookControllerCreate, getBookControllerFindAllQueryKey } from '@/api/generated/books/books';
 import { colors } from '@/lib/theme/colors';
 
 function isValidISBN(isbn: string): boolean {
@@ -16,6 +12,7 @@ function isValidISBN(isbn: string): boolean {
 }
 
 export function AddBookScreen() {
+  const queryClient = useQueryClient();
   const createBook = useBookControllerCreate();
   const [isbn, setIsbn] = useState('');
   const [error, setError] = useState('');
@@ -28,10 +25,17 @@ export function AddBookScreen() {
       return;
     }
     try {
-      await createBook.mutateAsync({ data: { isbn: isbn.replace(/[-\s]/g, '') } });
+      await createBook.mutateAsync({
+        data: { isbn: isbn.replace(/[-\s]/g, '') },
+      });
+      await queryClient.invalidateQueries({ queryKey: getBookControllerFindAllQueryKey() });
       setSnackbar('책이 추가되었습니다!');
       setTimeout(() => router.back(), 500);
-    } catch {
+    } catch (error: any) {
+      const message = error?.response?.data?.message;
+
+      console.error(message);
+
       setError('책 추가에 실패했습니다. ISBN을 확인해주세요.');
     }
   };
@@ -43,7 +47,9 @@ export function AddBookScreen() {
     >
       <View style={styles.card}>
         <Text style={styles.title}>새 책 등록</Text>
-        <Text style={styles.subtitle}>ISBN 코드를 입력하여 책을 추가합니다.</Text>
+        <Text style={styles.subtitle}>
+          ISBN 코드를 입력하여 책을 추가합니다.
+        </Text>
 
         <TextInput
           label="ISBN"
@@ -108,21 +114,33 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.textPrimary,
     marginBottom: 8,
-    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
+    fontFamily: Platform.select({
+      ios: 'Georgia',
+      android: 'serif',
+      default: 'serif',
+    }),
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 14,
     color: colors.textMuted,
     marginBottom: 32,
-    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
+    fontFamily: Platform.select({
+      ios: 'Georgia',
+      android: 'serif',
+      default: 'serif',
+    }),
     textAlign: 'center',
   },
   input: {
     marginBottom: 16,
     backgroundColor: 'transparent',
     fontSize: 18,
-    fontFamily: Platform.select({ ios: 'Courier New', android: 'monospace', default: 'monospace' }), // Monospace for ISBN
+    fontFamily: Platform.select({
+      ios: 'Courier New',
+      android: 'monospace',
+      default: 'monospace',
+    }), // Monospace for ISBN
     color: colors.textPrimary,
   },
   error: {
@@ -130,7 +148,11 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginBottom: 16,
     textAlign: 'center',
-    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
+    fontFamily: Platform.select({
+      ios: 'Georgia',
+      android: 'serif',
+      default: 'serif',
+    }),
   },
   button: {
     marginTop: 16,
@@ -142,6 +164,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: colors.warmWhite,
-    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
+    fontFamily: Platform.select({
+      ios: 'Georgia',
+      android: 'serif',
+      default: 'serif',
+    }),
   },
 });

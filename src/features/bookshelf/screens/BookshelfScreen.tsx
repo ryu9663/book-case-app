@@ -5,7 +5,8 @@ import { router } from 'expo-router';
 import { BookshelfRow } from '../components/BookshelfRow';
 import { EmptyShelf } from '../components/EmptyShelf';
 import { AddBookFAB } from '../components/AddBookFAB';
-import { useBookControllerFindAll, useBookControllerRemove } from '@/api/generated/books/books';
+import { useBookControllerFindAll, useBookControllerRemove, getBookControllerFindAllQueryKey } from '@/api/generated/books/books';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/features/auth/auth-context';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { ErrorScreen } from '@/components/ui/ErrorScreen';
@@ -25,6 +26,7 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
 
 export function BookshelfScreen() {
   const { logout } = useAuth();
+  const queryClient = useQueryClient();
   const { data: books, isLoading, error, refetch } = useBookControllerFindAll();
   const deleteBookMutation = useBookControllerRemove();
 
@@ -51,6 +53,7 @@ export function BookshelfScreen() {
     if (!selectedBook) return;
     try {
       await deleteBookMutation.mutateAsync({ id: selectedBook.id });
+      await queryClient.invalidateQueries({ queryKey: getBookControllerFindAllQueryKey() });
       setSnackbar('책이 삭제되었습니다.');
     } catch {
       setSnackbar('삭제에 실패했습니다.');

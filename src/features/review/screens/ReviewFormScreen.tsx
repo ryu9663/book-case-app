@@ -8,7 +8,8 @@ import {
 } from 'react-native';
 import { TextInput, Button, Text, Snackbar } from 'react-native-paper';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useReviewControllerFindOne, useReviewControllerCreate, useReviewControllerUpdate } from '@/api/generated/reviews/reviews';
+import { useQueryClient } from '@tanstack/react-query';
+import { useReviewControllerFindOne, useReviewControllerCreate, useReviewControllerUpdate, getReviewControllerFindAllQueryKey, getReviewControllerFindOneQueryKey } from '@/api/generated/reviews/reviews';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { colors } from '@/lib/theme/colors';
 
@@ -21,6 +22,7 @@ export function ReviewFormScreen() {
   const reviewId = id ? Number(id) : null;
   const isEdit = !!reviewId;
 
+  const queryClient = useQueryClient();
   const { data: existingReview, isLoading } = useReviewControllerFindOne(
     bookId,
     reviewId ?? 0,
@@ -59,6 +61,12 @@ export function ReviewFormScreen() {
         });
         setSnackbar('독후감이 작성되었습니다!');
       }
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: getReviewControllerFindAllQueryKey(bookId) }),
+        ...(isEdit && reviewId
+          ? [queryClient.invalidateQueries({ queryKey: getReviewControllerFindOneQueryKey(bookId, reviewId) })]
+          : []),
+      ]);
       setTimeout(() => router.back(), 500);
     } catch {
       setSnackbar(isEdit ? '수정에 실패했습니다.' : '작성에 실패했습니다.');

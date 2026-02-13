@@ -6,7 +6,14 @@ import { BookOpenAnimation } from '../components/BookOpenAnimation';
 import { BookCover } from '../components/BookCover';
 import { BookInfoCard } from '../components/BookInfoCard';
 import { BookEditDialog } from '../components/BookEditDialog';
-import { useBookControllerFindOne, useBookControllerUpdate, useBookControllerRemove } from '@/api/generated/books/books';
+import {
+  useBookControllerFindOne,
+  useBookControllerUpdate,
+  useBookControllerRemove,
+  getBookControllerFindAllQueryKey,
+  getBookControllerFindOneQueryKey,
+} from '@/api/generated/books/books';
+import { useQueryClient } from '@tanstack/react-query';
 import { ReviewList } from '@/features/review/components/ReviewList';
 import { useAuth } from '@/features/auth/auth-context';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
@@ -18,7 +25,14 @@ export function BookDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const bookId = Number(id);
   const { user } = useAuth();
-  const { data: book, isLoading, error, refetch } = useBookControllerFindOne(bookId);
+  const {
+    data: book,
+    isLoading,
+    error,
+    refetch,
+  } = useBookControllerFindOne(bookId);
+
+  const queryClient = useQueryClient();
   const updateBook = useBookControllerUpdate();
   const deleteBook = useBookControllerRemove();
 
@@ -29,6 +43,10 @@ export function BookDetailScreen() {
   const handleSave = async (title: string, author: string) => {
     try {
       await updateBook.mutateAsync({ id: bookId, data: { title, author } });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: getBookControllerFindOneQueryKey(bookId) }),
+        queryClient.invalidateQueries({ queryKey: getBookControllerFindAllQueryKey() }),
+      ]);
       setEditVisible(false);
       setSnackbar('수정되었습니다.');
     } catch {
@@ -39,6 +57,7 @@ export function BookDetailScreen() {
   const handleDelete = async () => {
     try {
       await deleteBook.mutateAsync({ id: bookId });
+      await queryClient.invalidateQueries({ queryKey: getBookControllerFindAllQueryKey() });
       router.back();
     } catch {
       setSnackbar('삭제에 실패했습니다.');
@@ -48,15 +67,25 @@ export function BookDetailScreen() {
 
   if (isLoading) return <LoadingScreen />;
   if (error || !book)
-    return <ErrorScreen message="책 정보를 불러올 수 없습니다." onRetry={refetch} />;
+    return (
+      <ErrorScreen message="책 정보를 불러올 수 없습니다." onRetry={refetch} />
+    );
 
   return (
     <View style={styles.container}>
       <Appbar.Header style={styles.header}>
         <Appbar.BackAction color="#FFF" onPress={() => router.back()} />
         <Appbar.Content title={book.title} titleStyle={styles.headerTitle} />
-        <Appbar.Action icon="pencil" color="#FFF" onPress={() => setEditVisible(true)} />
-        <Appbar.Action icon="delete" color="#FFF" onPress={() => setDeleteVisible(true)} />
+        <Appbar.Action
+          icon="pencil"
+          color="#FFF"
+          onPress={() => setEditVisible(true)}
+        />
+        <Appbar.Action
+          icon="delete"
+          color="#FFF"
+          onPress={() => setDeleteVisible(true)}
+        />
       </Appbar.Header>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -71,7 +100,9 @@ export function BookDetailScreen() {
         <View style={styles.reviewSection}>
           <ReviewList
             bookId={bookId}
-            onAddReview={() => router.push(`/(main)/review/create?bookId=${bookId}`)}
+            onAddReview={() =>
+              router.push(`/(main)/review/create?bookId=${bookId}`)
+            }
           />
         </View>
       </ScrollView>
@@ -117,8 +148,12 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: '#FFF8E1',
-    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
-    fontWeight: '700', 
+    fontFamily: Platform.select({
+      ios: 'Georgia',
+      android: 'serif',
+      default: 'serif',
+    }),
+    fontWeight: '700',
     fontSize: 20,
   },
   scrollContent: {
