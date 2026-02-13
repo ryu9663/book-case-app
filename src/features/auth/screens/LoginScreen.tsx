@@ -13,12 +13,23 @@ import { router } from 'expo-router';
 import { useAuth } from '../auth-context';
 import { loginUser } from '../api';
 import { colors } from '@/lib/theme/colors';
+import axios from 'axios';
 
 export function LoginScreen() {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  const inputProps = {
+    mode: 'flat' as const,
+    underlineColor: 'transparent',
+    activeUnderlineColor: 'transparent',
+    style: styles.input,
+    contentStyle: styles.inputContent,
+    textColor: colors.textPrimary,
+    theme: { colors: { onSurfaceVariant: colors.textMuted } },
+  };
 
   const handleLogin = async () => {
     if (!email.trim() || !password) return;
@@ -27,8 +38,12 @@ export function LoginScreen() {
     try {
       const tokens = await loginUser({ email, password });
       await login(tokens);
-    } catch {
-      Alert.alert('로그인 실패', '이메일 또는 비밀번호가 올바르지 않습니다.');
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        Alert.alert('로그인 실패', '이메일 또는 비밀번호가 올바르지 않습니다.');
+      } else {
+        Alert.alert('네트워크 오류', '서버에 연결할 수 없습니다. 인터넷 연결을 확인해주세요.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -41,7 +56,6 @@ export function LoginScreen() {
         style={styles.backgroundImage}
         resizeMode="cover"
       >
-        {/* Soft overlay for blurry/muted effect */}
         <View style={styles.whiteOverlay} />
 
         <KeyboardAvoidingView
@@ -58,32 +72,20 @@ export function LoginScreen() {
 
             <View style={styles.formContainer}>
               <TextInput
+                {...inputProps}
                 label="이메일"
                 value={email}
                 onChangeText={setEmail}
-                mode="flat"
-                underlineColor="transparent"
-                activeUnderlineColor="transparent"
-                style={styles.input}
-                contentStyle={styles.inputContent}
-                textColor={colors.textPrimary}
-                theme={{ colors: { onSurfaceVariant: colors.textMuted } }}
                 keyboardType="email-address"
                 autoCapitalize="none"
               />
 
               <TextInput
+                {...inputProps}
                 label="비밀번호"
                 value={password}
                 onChangeText={setPassword}
-                mode="flat"
-                underlineColor="transparent"
-                activeUnderlineColor="transparent"
                 secureTextEntry
-                style={styles.input}
-                contentStyle={styles.inputContent}
-                textColor={colors.textPrimary}
-                theme={{ colors: { onSurfaceVariant: colors.textMuted } }}
               />
 
               <Button
@@ -102,6 +104,7 @@ export function LoginScreen() {
             <TouchableOpacity
               onPress={() => router.push('/(auth)/register')}
               style={styles.footer}
+              accessibilityRole="link"
             >
               <Text style={styles.footerText}>
                 새로운 이야기를 시작할까요?{' '}
@@ -118,7 +121,7 @@ export function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EBE5D9', // Slightly deeper cream/taupe base
+    backgroundColor: '#EBE5D9',
   },
   backgroundImage: {
     flex: 1,
@@ -127,11 +130,9 @@ const styles = StyleSheet.create({
   },
   whiteOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(255, 253, 245, 0.68)', // Warm white overlay
+    backgroundColor: 'rgba(255, 253, 245, 0.68)',
   },
-  backgroundDecor: {
-    display: 'none', // Remove old helper
-  },
+
   keyboardView: {
     flex: 1,
     justifyContent: 'center',
@@ -147,22 +148,6 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     marginBottom: 48,
-  },
-  iconContainer: {
-    width: 80,
-    height: 80,
-    backgroundColor: colors.shelfBrown,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 24,
-    shadowColor: '#5D4037',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 10,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)',
   },
   title: {
     fontSize: 32,
