@@ -66,7 +66,7 @@ export function LoginScreen() {
             <View style={styles.header}>
               <Text style={styles.title}>나의 작은 서재</Text>
               <Text style={styles.subtitle}>
-                오직 당신만을 위한 평온한 기록의 공간
+                오직 나만을 위한 평온한 기록의 공간
               </Text>
             </View>
 
@@ -113,6 +113,9 @@ export function LoginScreen() {
                 <Text style={styles.signupText}>회원가입</Text>
               </Text>
             </TouchableOpacity>
+            <Text style={styles.caption}>
+              "서재는 정신의 정원이며, 책은 그 속에서 피어나는 영원한 꽃이다"
+            </Text>
           </View>
         </KeyboardAvoidingView>
       </ImageBackground>
@@ -211,5 +214,13 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     fontWeight: '600',
     color: colors.shelfBrown,
+  },
+  caption: {
+    opacity: 0.5,
+    marginTop: 18,
+    color: colors.shelfBrown,
+    fontWeight: 400,
+    fontSize: 12,
+    textAlign: 'center',
   },
 });
