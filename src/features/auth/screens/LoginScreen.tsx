@@ -73,6 +73,7 @@ export function LoginScreen() {
             <View style={styles.formContainer}>
               <TextInput
                 {...inputProps}
+                testID="email-input"
                 label="이메일"
                 value={email}
                 onChangeText={setEmail}
@@ -82,6 +83,7 @@ export function LoginScreen() {
 
               <TextInput
                 {...inputProps}
+                testID="password-input"
                 label="비밀번호"
                 value={password}
                 onChangeText={setPassword}
