@@ -11,7 +11,7 @@ import { Button, Text, TextInput } from 'react-native-paper';
 import { useState } from 'react';
 import { router } from 'expo-router';
 import { useAuth } from '../auth-context';
-import { loginUser } from '../api';
+import { useAuthControllerLogin } from '@/api/generated/auth/auth';
 import { colors } from '@/lib/theme/colors';
 import axios from 'axios';
 
@@ -19,7 +19,7 @@ export function LoginScreen() {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const { mutateAsync, isPending } = useAuthControllerLogin();
 
   const inputProps = {
     mode: 'flat' as const,
@@ -34,18 +34,18 @@ export function LoginScreen() {
   const handleLogin = async () => {
     if (!email.trim() || !password) return;
 
-    setIsLoading(true);
     try {
-      const tokens = await loginUser({ email, password });
+      const tokens = await mutateAsync({ data: { email, password } });
       await login(tokens);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 401) {
         Alert.alert('로그인 실패', '이메일 또는 비밀번호가 올바르지 않습니다.');
       } else {
-        Alert.alert('네트워크 오류', '서버에 연결할 수 없습니다. 인터넷 연결을 확인해주세요.');
+        Alert.alert(
+          '네트워크 오류',
+          '서버에 연결할 수 없습니다. 인터넷 연결을 확인해주세요.',
+        );
       }
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -91,8 +91,8 @@ export function LoginScreen() {
               <Button
                 mode="contained"
                 onPress={handleLogin}
-                loading={isLoading}
-                disabled={isLoading}
+                loading={isPending}
+                disabled={isPending}
                 style={styles.loginButton}
                 labelStyle={styles.loginButtonLabel}
                 contentStyle={styles.loginButtonContent}
