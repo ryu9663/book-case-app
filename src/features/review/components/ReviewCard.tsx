@@ -1,10 +1,10 @@
 import { StyleSheet, Platform } from 'react-native';
 import { Card, Text, IconButton } from 'react-native-paper';
 import { colors } from '@/lib/theme/colors';
-import type { Review } from '@/api/generated/models';
+import type { ReviewResponseDto } from '@/api/generated/models';
 
 interface Props {
-  review: Review;
+  review: ReviewResponseDto;
   onEdit: () => void;
   onDelete: () => void;
 }
@@ -50,13 +50,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: colors.textPrimary,
-    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
+    fontFamily: Platform.select({
+      ios: 'Georgia',
+      android: 'serif',
+      default: 'serif',
+    }),
   },
   content: {
     fontSize: 14,
     color: colors.textSecondary,
     lineHeight: 22,
-    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
+    fontFamily: Platform.select({
+      ios: 'Georgia',
+      android: 'serif',
+      default: 'serif',
+    }),
     marginTop: 4,
   },
   actions: {

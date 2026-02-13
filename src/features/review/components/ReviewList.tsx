@@ -13,7 +13,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { colors } from '@/lib/theme/colors';
-import type { Review } from '@/api/generated/models';
+import type { Review, ReviewResponseDto } from '@/api/generated/models';
 
 interface Props {
   bookId: number;
@@ -25,7 +25,8 @@ export function ReviewList({ bookId, onAddReview }: Props) {
   const { data: reviews, isLoading } = useReviewControllerFindAll(bookId);
   const deleteReview = useReviewControllerRemove();
 
-  const [selectedReview, setSelectedReview] = useState<Review | null>(null);
+  const [selectedReview, setSelectedReview] =
+    useState<ReviewResponseDto | null>(null);
   const [deleteVisible, setDeleteVisible] = useState(false);
   const [snackbar, setSnackbar] = useState('');
 
@@ -33,7 +34,9 @@ export function ReviewList({ bookId, onAddReview }: Props) {
     if (!selectedReview) return;
     try {
       await deleteReview.mutateAsync({ bookId, id: selectedReview.id });
-      await queryClient.invalidateQueries({ queryKey: getReviewControllerFindAllQueryKey(bookId) });
+      await queryClient.invalidateQueries({
+        queryKey: getReviewControllerFindAllQueryKey(bookId),
+      });
       setSnackbar('독후감이 삭제되었습니다.');
     } catch {
       setSnackbar('삭제에 실패했습니다.');
