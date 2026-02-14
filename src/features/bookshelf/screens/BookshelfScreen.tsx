@@ -113,6 +113,7 @@ export function BookshelfScreen() {
         <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
           <Text style={styles.headerTitle}>나의 서재</Text>
           <Pressable
+            testID="logout-button"
             onPress={logout}
             style={({ pressed }) => [
               styles.logoutButton,
@@ -153,6 +154,7 @@ export function BookshelfScreen() {
                       return (
                         <View key="add" style={styles.gridItem}>
                           <Pressable
+                            testID="add-book-button"
                             onPress={goAddBook}
                             style={({ pressed }) => [
                               styles.addButton,
@@ -164,7 +166,7 @@ export function BookshelfScreen() {
                             <MaterialCommunityIcons
                               name="plus"
                               size={24}
-                              color="rgba(255,255,255,0.3)"
+                              color="rgba(255,255,255,0.6)"
                             />
                           </Pressable>
                         </View>
@@ -295,7 +297,7 @@ const styles = StyleSheet.create({
     aspectRatio: 2 / 3.2,
     borderWidth: 1.5,
     borderStyle: 'dashed',
-    borderColor: 'rgba(255,255,255,0.2)',
+    borderColor: 'rgba(255,255,255,0.6)',
     borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
