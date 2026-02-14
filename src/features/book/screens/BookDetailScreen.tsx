@@ -91,7 +91,7 @@ export function BookDetailScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.coverSection}>
           <BookOpenAnimation>
-            <BookCover title={book.title} author={book.author} />
+            <BookCover title={book.title} author={book.author} thumbnail={book.thumbnail} />
           </BookOpenAnimation>
         </View>
 

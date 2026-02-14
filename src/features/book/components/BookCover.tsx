@@ -1,20 +1,30 @@
-import { View, StyleSheet, Platform } from 'react-native';
+import { View, StyleSheet, Platform, Image } from 'react-native';
 import { Text } from 'react-native-paper';
 import { getSpineColor } from '@/lib/theme/colors';
 
 interface Props {
   title: string;
   author: string;
+  thumbnail?: string | null;
 }
 
-export function BookCover({ title, author }: Props) {
+export function BookCover({ title, author, thumbnail }: Props) {
   const bgColor = getSpineColor(title);
+
+  if (thumbnail) {
+    return (
+      <View style={styles.cover}>
+        <Image source={{ uri: thumbnail }} style={styles.thumbnailImage} />
+        <View style={styles.pagesRight} />
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.cover, { backgroundColor: bgColor }]}>
       {/* Spine lighting effect */}
       <View style={styles.spineHighlight} />
-      
+
       {/* Decorative Frame */}
       <View style={styles.frame}>
         <View style={styles.content}>
@@ -98,6 +108,11 @@ const styles = StyleSheet.create({
     fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
     textAlign: 'center',
     fontStyle: 'italic',
+  },
+  thumbnailImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
   },
   pagesRight: {
     position: 'absolute',

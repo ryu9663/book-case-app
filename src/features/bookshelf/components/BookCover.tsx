@@ -1,4 +1,4 @@
-import { Pressable, View, StyleSheet, Platform } from 'react-native';
+import { Pressable, View, StyleSheet, Platform, Image } from 'react-native';
 import { Text } from 'react-native-paper';
 import { getSpineColor } from '@/lib/theme/colors';
 import type { BookResponseDto } from '@/api/generated/models';
@@ -27,21 +27,27 @@ export function BookCover({ book, onPress, onLongPress }: Props) {
       <View />
 
       {/* Book Face */}
-      <View style={[styles.face, { backgroundColor: bgColor }]}>
-        {/* Inner Border (Gold Foil Detail) */}
-        <View style={styles.innerBorder} />
-
-        {/* Content */}
-        <View style={styles.content}>
-          <Text style={styles.title} numberOfLines={4}>
-            {book.title}
-          </Text>
-          <View style={styles.divider} />
-          <Text style={styles.author} numberOfLines={1}>
-            {book.author}
-          </Text>
+      {book.thumbnail ? (
+        <View style={styles.face}>
+          <Image source={{ uri: book.thumbnail }} style={styles.thumbnailImage} />
         </View>
-      </View>
+      ) : (
+        <View style={[styles.face, { backgroundColor: bgColor }]}>
+          {/* Inner Border (Gold Foil Detail) */}
+          <View style={styles.innerBorder} />
+
+          {/* Content */}
+          <View style={styles.content}>
+            <Text style={styles.title} numberOfLines={4}>
+              {book.title}
+            </Text>
+            <View style={styles.divider} />
+            <Text style={styles.author} numberOfLines={1}>
+              {book.author}
+            </Text>
+          </View>
+        </View>
+      )}
     </Pressable>
   );
 }
@@ -85,6 +91,11 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: 'rgba(255,255,255,0.2)',
     borderRadius: 3,
+  },
+  thumbnailImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
   },
   content: {
     flex: 1,
