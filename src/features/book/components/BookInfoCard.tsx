@@ -1,10 +1,10 @@
 import { View, StyleSheet, Platform } from 'react-native';
 import { Text, Card } from 'react-native-paper';
 import { colors } from '@/lib/theme/colors';
-import type { Book } from '@/api/generated/models';
+import type { BookResponseDto } from '@/api/generated/models';
 
 interface Props {
-  book: Book;
+  book: BookResponseDto;
 }
 
 export function BookInfoCard({ book }: Props) {
@@ -17,8 +17,12 @@ export function BookInfoCard({ book }: Props) {
         <Text style={styles.label}>저자</Text>
         <Text style={styles.value}>{book.author}</Text>
 
-        <Text style={styles.label}>ISBN</Text>
-        <Text style={styles.value}>{book.isbn}</Text>
+        {book.publisher ? (
+          <>
+            <Text style={styles.label}>출판사</Text>
+            <Text style={styles.value}>{book.publisher}</Text>
+          </>
+        ) : null}
       </Card.Content>
     </Card>
   );

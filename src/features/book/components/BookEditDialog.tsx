@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { StyleSheet, Platform } from 'react-native';
 import { Dialog, Portal, TextInput, Button } from 'react-native-paper';
 import { colors } from '@/lib/theme/colors';
-import type { Book } from '@/api/generated/models';
+import type { BookResponseDto } from '@/api/generated/models';
 
 interface Props {
   visible: boolean;
-  book: Book | null;
+  book: BookResponseDto | null;
   onSave: (title: string, author: string) => void;
   onDismiss: () => void;
   isLoading?: boolean;
