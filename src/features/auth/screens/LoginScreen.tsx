@@ -52,7 +52,7 @@ export function LoginScreen() {
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={require('../../../../assets/login/background.webp')}
+        source={require('@assets/login/background.webp')}
         style={styles.backgroundImage}
         resizeMode="cover"
       >
