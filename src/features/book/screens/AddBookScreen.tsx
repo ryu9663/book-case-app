@@ -31,7 +31,6 @@ export function AddBookScreen() {
 
   const [searchTitle, setSearchTitle] = useState('');
   const [submittedTitle, setSubmittedTitle] = useState('');
-  const [searched, setSearched] = useState(false);
   const [snackbar, setSnackbar] = useState('');
   const [error, setError] = useState('');
   const [manualMode, setManualMode] = useState(false);
@@ -39,13 +38,9 @@ export function AddBookScreen() {
   const [manualAuthor, setManualAuthor] = useState('');
   const [manualPublisher, setManualPublisher] = useState('');
 
-  const {
-    data: searchResults,
-    isFetching,
-    refetch,
-  } = useBookControllerSearch(
+  const { data: searchResults, isFetching } = useBookControllerSearch(
     { title: submittedTitle },
-    { query: { enabled: false } },
+    { query: { enabled: submittedTitle.length > 0 } },
   );
 
   const handleSearch = async () => {
@@ -53,8 +48,6 @@ export function AddBookScreen() {
     setError('');
     setManualMode(false);
     setSubmittedTitle(searchTitle.trim());
-    setSearched(true);
-    setTimeout(() => refetch(), 0);
   };
 
   const handleManualSubmit = async () => {
@@ -142,9 +135,7 @@ export function AddBookScreen() {
     >
       <View style={styles.card}>
         <Text style={styles.title}>새 책 등록</Text>
-        <Text style={styles.subtitle}>
-          제목을 검색하여 책을 추가합니다.
-        </Text>
+        <Text style={styles.subtitle}>제목을 검색하여 책을 추가합니다.</Text>
 
         <View style={styles.searchRow}>
           <TextInput
@@ -178,7 +169,7 @@ export function AddBookScreen() {
         <View style={styles.centerContent}>
           <ActivityIndicator size="large" color={colors.paper} />
         </View>
-      ) : searched && searchResults ? (
+      ) : submittedTitle.length > 0 && searchResults ? (
         searchResults.length > 0 ? (
           <FlatList
             data={searchResults}
