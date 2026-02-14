@@ -12,7 +12,7 @@
 
 ## BookInfoCard.tsx
 
-- [ ] `View` import 미사용 (L1)
+- [x] `View` import 미사용 (L1)
   - JSX에서 사용하지 않는 `View` import 제거
 
 ## 테스트 코드
