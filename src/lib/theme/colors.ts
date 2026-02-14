@@ -4,17 +4,25 @@ export const colors = {
   shelfDark: '#3E2723',  // Shadow
   shelfLight: '#8D6E63', // Highlight / Lighter wood
   shelfHighlight: '#A1887F', // Top edge highlight
-  
+
+  // Bookshelf design (v2)
+  headerBg: '#4A3728',    // Header & footer background
+  contentBg: '#FDFCF0',   // Main content background
+  shelfBg: '#D2B48C',     // Bookshelf background (warm tan/brown)
+  accent: '#C19A6B',      // Gold accent for subtitle, icons
+  shelfPlank: '#8B5E3C',  // Shelf plank top face
+  shelfPlankSide: '#5D4636', // Shelf plank side face / pillars
+
   // Backgrounds (Parchment / Warm Paper)
   cream: '#F5F5DC',      // Main background (Beige)
   warmWhite: '#FAF3E0',  // Cards / content areas
   paper: '#FFF8E1',      // Book pages / notes
-  
+
   // Text (Ink / Contrast)
   textPrimary: '#3E2723',   // Dark Brown Ink
   textSecondary: '#5D4037', // Medium Brown Ink
   textMuted: '#8D6E63',     // Faded Ink
-  
+
   // Accents
   accentGreen: '#558B2F', // Forest Green
   accentGold: '#FFB300',  // Gold Foil
