@@ -1,18 +1,28 @@
 import { useMemo, useState, useCallback } from 'react';
-import { View, ScrollView, RefreshControl, StyleSheet, Platform } from 'react-native';
+import {
+  View,
+  ScrollView,
+  RefreshControl,
+  StyleSheet,
+  Platform,
+} from 'react-native';
 import { Appbar, Menu, Snackbar } from 'react-native-paper';
 import { router } from 'expo-router';
 import { BookshelfRow } from '../components/BookshelfRow';
 import { EmptyShelf } from '../components/EmptyShelf';
 import { AddBookFAB } from '../components/AddBookFAB';
-import { useBookControllerFindAll, useBookControllerRemove, getBookControllerFindAllQueryKey } from '@/api/generated/books/books';
+import {
+  useBookControllerFindAll,
+  useBookControllerRemove,
+  getBookControllerFindAllQueryKey,
+} from '@/api/generated/books/books';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/features/auth/auth-context';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { ErrorScreen } from '@/components/ui/ErrorScreen';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { colors } from '@/lib/theme/colors';
-import type { Book } from '@/api/generated/models';
+import { BookResponseDto } from '@/api/generated/models';
 
 const BOOKS_PER_ROW = 4;
 
@@ -31,20 +41,19 @@ export function BookshelfScreen() {
   const deleteBookMutation = useBookControllerRemove();
 
   const [menuVisible, setMenuVisible] = useState(false);
-  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  const [selectedBook, setSelectedBook] = useState<BookResponseDto | null>(
+    null,
+  );
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [snackbar, setSnackbar] = useState('');
 
-  const rows = useMemo(
-    () => chunkArray(books ?? [], BOOKS_PER_ROW),
-    [books],
-  );
+  const rows = useMemo(() => chunkArray(books ?? [], BOOKS_PER_ROW), [books]);
 
-  const handleBookPress = useCallback((book: Book) => {
+  const handleBookPress = useCallback((book: BookResponseDto) => {
     router.push(`/(main)/book/${book.id}`);
   }, []);
 
-  const handleBookLongPress = useCallback((book: Book) => {
+  const handleBookLongPress = useCallback((book: BookResponseDto) => {
     setSelectedBook(book);
     setDeleteDialogVisible(true);
   }, []);
@@ -53,7 +62,9 @@ export function BookshelfScreen() {
     if (!selectedBook) return;
     try {
       await deleteBookMutation.mutateAsync({ id: selectedBook.id });
-      await queryClient.invalidateQueries({ queryKey: getBookControllerFindAllQueryKey() });
+      await queryClient.invalidateQueries({
+        queryKey: getBookControllerFindAllQueryKey(),
+      });
       setSnackbar('책이 삭제되었습니다.');
     } catch {
       setSnackbar('삭제에 실패했습니다.');
@@ -66,7 +77,10 @@ export function BookshelfScreen() {
   const goAddBook = () => router.push('/(main)/add-book');
 
   if (isLoading) return <LoadingScreen />;
-  if (error) return <ErrorScreen message="책 목록을 불러올 수 없습니다." onRetry={refetch} />;
+  if (error)
+    return (
+      <ErrorScreen message="책 목록을 불러올 수 없습니다." onRetry={refetch} />
+    );
 
   return (
     <View style={styles.container}>
@@ -152,7 +166,11 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: '#FFF8E1', // Old Lace
     // Use serif for a classic book feel
-    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
+    fontFamily: Platform.select({
+      ios: 'Georgia',
+      android: 'serif',
+      default: 'serif',
+    }),
     fontWeight: '700',
     fontSize: 22,
   },

@@ -1,10 +1,10 @@
 import { Pressable, View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import { getSpineColor } from '@/lib/theme/colors';
-import type { Book } from '@/api/generated/models';
+import type { BookResponseDto } from '@/api/generated/models';
 
 interface Props {
-  book: Book;
+  book: BookResponseDto;
   onPress: () => void;
   onLongPress?: () => void;
 }
@@ -23,7 +23,7 @@ export function BookSpine({ book, onPress, onLongPress }: Props) {
     >
       {/* Texture: Spine highlight (lighting) */}
       <View style={styles.lighting} />
-      
+
       {/* Decorative Bands (Gold lines) */}
       <View style={[styles.band, { top: 12 }]} />
       <View style={[styles.band, { top: 16 }]} />
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     width: 38, // Slightly thinner for elegance
     height: 140,
     borderRadius: 3,
-    marginHorizontal: 1, 
+    marginHorizontal: 1,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
@@ -64,8 +64,8 @@ const styles = StyleSheet.create({
   },
   lighting: {
     position: 'absolute',
-    top: 0, 
-    left: 2, 
+    top: 0,
+    left: 2,
     bottom: 0,
     width: 4,
     backgroundColor: 'rgba(255,255,255,0.1)', // Subtle gloss
@@ -92,10 +92,10 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     textAlign: 'center',
     width: 120,
-    transform: [{ rotate: '-90deg' }], 
+    transform: [{ rotate: '-90deg' }],
     marginBottom: 4,
     // Try to force serif if system allows, otherwise sans is fine
-    // fontFamily: 'System', 
+    // fontFamily: 'System',
     textShadowColor: 'rgba(0,0,0,0.3)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 1,

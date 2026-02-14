@@ -1,12 +1,12 @@
 import { View, StyleSheet } from 'react-native';
 import { BookSpine } from './BookSpine';
 import { colors } from '@/lib/theme/colors';
-import type { Book } from '@/api/generated/models';
+import type { BookResponseDto } from '@/api/generated/models';
 
 interface Props {
-  books: Book[];
-  onBookPress: (book: Book) => void;
-  onBookLongPress?: (book: Book) => void;
+  books: BookResponseDto[];
+  onBookPress: (book: BookResponseDto) => void;
+  onBookLongPress?: (book: BookResponseDto) => void;
 }
 
 export function BookshelfRow({ books, onBookPress, onBookLongPress }: Props) {
