@@ -192,6 +192,28 @@ describe('ReviewFormScreen', () => {
     });
   });
 
+  it('startDate > endDate이면 스낵바 에러를 표시한다', () => {
+    render(<ReviewFormScreen />);
+
+    fireEvent.changeText(screen.getByTestId('title-input'), '테스트 제목');
+    fireEvent.changeText(screen.getByTestId('content-input'), '테스트 내용');
+    // 날짜 역순 선택: startDate > endDate
+    fireEvent.press(screen.getByTestId('date-range-button'));
+    mockDatePickerOnConfirm!({
+      startDate: new Date('2026-02-15T00:00:00'),
+      endDate: new Date('2026-01-15T00:00:00'),
+    });
+    // 페이지
+    fireEvent.changeText(screen.getByTestId('start-page-input'), '1');
+    fireEvent.changeText(screen.getByTestId('end-page-input'), '100');
+    fireEvent.press(screen.getByText('기록하기'));
+
+    expect(
+      screen.getByText('시작 날짜가 끝 날짜보다 클 수 없습니다.'),
+    ).toBeTruthy();
+    expect(mockCreateMutateAsync).not.toHaveBeenCalled();
+  });
+
   it('수정 모드: 기존 데이터가 복원되고 수정된 데이터로 제출된다', async () => {
     mockParams = { bookId: '1', id: '10' };
     mockExistingReview = {

@@ -81,6 +81,10 @@ export function ReviewFormScreen() {
       setSnackbar('독서 기간을 선택해주세요.');
       return;
     }
+    if (startDate > endDate) {
+      setSnackbar('시작 날짜가 끝 날짜보다 클 수 없습니다.');
+      return;
+    }
     const numberedStartPage = Number(startPage);
     const numberedEndPage = Number(endPage);
     if (
