@@ -170,7 +170,7 @@ export function ReviewFormScreen() {
 
           <TextInput
             testID="title-input"
-            label="책 제목"
+            label="독후감 제목"
             value={title}
             onChangeText={setTitle}
             mode="flat"
