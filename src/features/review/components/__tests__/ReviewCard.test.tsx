@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react-native';
+import { render, screen, fireEvent, act } from '@testing-library/react-native';
 import { ReviewCard } from '../ReviewCard';
 import type { ReviewResponseDto } from '@/api/generated/models';
 
@@ -31,6 +31,15 @@ const mockOnDelete = jest.fn();
 beforeEach(() => {
   jest.clearAllMocks();
 });
+
+function triggerTextLayout(
+  text: ReturnType<typeof screen.getByTestId>,
+  lineCount: number,
+) {
+  fireEvent(text, 'textLayout', {
+    nativeEvent: { lines: Array(lineCount).fill({ text: 'line' }) },
+  });
+}
 
 // --- Tests ---
 
@@ -100,5 +109,136 @@ describe('ReviewCard', () => {
     );
 
     expect(screen.getByText('p.50 - p.300')).toBeTruthy();
+  });
+
+  describe('접근성', () => {
+    it('수정/삭제 버튼에 accessibilityLabel이 있다', () => {
+      render(
+        <ReviewCard
+          review={mockReview}
+          onEdit={mockOnEdit}
+          onDelete={mockOnDelete}
+        />,
+      );
+
+      expect(screen.getByLabelText('독후감 수정')).toBeTruthy();
+      expect(screen.getByLabelText('독후감 삭제')).toBeTruthy();
+    });
+
+    it('더보기 버튼에 accessibilityRole과 accessibilityLabel이 있다', () => {
+      const longContent =
+        '첫째 줄\n둘째 줄\n셋째 줄\n넷째 줄\n다섯째 줄\n여섯째 줄\n일곱째 줄';
+      const longReview = { ...mockReview, content: longContent };
+
+      render(
+        <ReviewCard
+          review={longReview}
+          onEdit={mockOnEdit}
+          onDelete={mockOnDelete}
+        />,
+      );
+
+      const contentText = screen.getByTestId('review-content');
+      act(() => triggerTextLayout(contentText, 7));
+
+      const toggleButton = screen.getByLabelText('독후감 내용 더보기');
+      expect(toggleButton).toBeTruthy();
+      expect(toggleButton.props.accessibilityRole).toBe('button');
+    });
+
+    it('접기 상태에서 accessibilityLabel이 변경된다', () => {
+      const longContent =
+        '첫째 줄\n둘째 줄\n셋째 줄\n넷째 줄\n다섯째 줄\n여섯째 줄\n일곱째 줄';
+      const longReview = { ...mockReview, content: longContent };
+
+      render(
+        <ReviewCard
+          review={longReview}
+          onEdit={mockOnEdit}
+          onDelete={mockOnDelete}
+        />,
+      );
+
+      const contentText = screen.getByTestId('review-content');
+      act(() => triggerTextLayout(contentText, 7));
+
+      fireEvent.press(screen.getByLabelText('독후감 내용 더보기'));
+
+      expect(screen.getByLabelText('독후감 내용 접기')).toBeTruthy();
+      expect(screen.queryByLabelText('독후감 내용 더보기')).toBeNull();
+    });
+  });
+
+  describe('더보기/접기', () => {
+    const longContent =
+      '첫째 줄\n둘째 줄\n셋째 줄\n넷째 줄\n다섯째 줄\n여섯째 줄\n일곱째 줄';
+    const longReview = { ...mockReview, content: longContent };
+
+    it('긴 내용은 "더보기" 텍스트가 표시된다', () => {
+      render(
+        <ReviewCard
+          review={longReview}
+          onEdit={mockOnEdit}
+          onDelete={mockOnDelete}
+        />,
+      );
+
+      const contentText = screen.getByTestId('review-content');
+      act(() => triggerTextLayout(contentText, 7));
+
+      expect(screen.getByText('더보기')).toBeTruthy();
+    });
+
+    it('짧은 내용은 "더보기" 텍스트가 표시되지 않는다', () => {
+      render(
+        <ReviewCard
+          review={mockReview}
+          onEdit={mockOnEdit}
+          onDelete={mockOnDelete}
+        />,
+      );
+
+      const contentText = screen.getByTestId('review-content');
+      act(() => triggerTextLayout(contentText, 2));
+
+      expect(screen.queryByText('더보기')).toBeNull();
+    });
+
+    it('"더보기"를 누르면 "접기"로 변경된다', () => {
+      render(
+        <ReviewCard
+          review={longReview}
+          onEdit={mockOnEdit}
+          onDelete={mockOnDelete}
+        />,
+      );
+
+      const contentText = screen.getByTestId('review-content');
+      act(() => triggerTextLayout(contentText, 7));
+
+      fireEvent.press(screen.getByText('더보기'));
+
+      expect(screen.getByText('접기')).toBeTruthy();
+      expect(screen.queryByText('더보기')).toBeNull();
+    });
+
+    it('"접기"를 누르면 다시 "더보기"로 변경된다', () => {
+      render(
+        <ReviewCard
+          review={longReview}
+          onEdit={mockOnEdit}
+          onDelete={mockOnDelete}
+        />,
+      );
+
+      const contentText = screen.getByTestId('review-content');
+      act(() => triggerTextLayout(contentText, 7));
+
+      fireEvent.press(screen.getByText('더보기'));
+      fireEvent.press(screen.getByText('접기'));
+
+      expect(screen.getByText('더보기')).toBeTruthy();
+      expect(screen.queryByText('접기')).toBeNull();
+    });
   });
 });

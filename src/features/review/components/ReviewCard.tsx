@@ -1,7 +1,17 @@
-import { StyleSheet, Platform, View } from 'react-native';
+import { useState, useCallback } from 'react';
+import {
+  StyleSheet,
+  Platform,
+  View,
+  Pressable,
+  LayoutAnimation,
+} from 'react-native';
 import { Card, Text, IconButton, Divider } from 'react-native-paper';
 import { colors } from '@/lib/theme/colors';
 import type { ReviewResponseDto } from '@/api/generated/models';
+import type { TextLayoutEvent } from 'react-native';
+
+const MAX_LINES = 5;
 
 interface Props {
   review: ReviewResponseDto;
@@ -14,6 +24,18 @@ function formatDateDisplay(dateStr: string): string {
 }
 
 export function ReviewCard({ review, onEdit, onDelete }: Props) {
+  const [expanded, setExpanded] = useState(false);
+  const [isTruncatable, setIsTruncatable] = useState(false);
+
+  const handleTextLayout = useCallback(
+    (e: TextLayoutEvent) => {
+      if (!isTruncatable && e.nativeEvent.lines.length >= MAX_LINES) {
+        setIsTruncatable(true);
+      }
+    },
+    [isTruncatable],
+  );
+
   return (
     <Card style={styles.card}>
       <Card.Title
@@ -21,16 +43,50 @@ export function ReviewCard({ review, onEdit, onDelete }: Props) {
         titleStyle={styles.title}
         right={() => (
           <>
-            <IconButton icon="pencil" size={18} onPress={onEdit} />
-            <IconButton icon="delete" size={18} onPress={onDelete} />
+            <IconButton
+              icon="pencil"
+              size={18}
+              onPress={onEdit}
+              accessibilityLabel="독후감 수정"
+            />
+            <IconButton
+              icon="delete"
+              size={18}
+              onPress={onDelete}
+              accessibilityLabel="독후감 삭제"
+            />
           </>
         )}
         rightStyle={styles.actions}
       />
       <Card.Content>
-        <Text numberOfLines={3} style={styles.content}>
+        <Text
+          testID="review-content"
+          numberOfLines={expanded ? undefined : MAX_LINES}
+          onTextLayout={handleTextLayout}
+          style={styles.content}
+        >
           {review.content}
         </Text>
+        {isTruncatable && (
+          <Pressable
+            onPress={() => {
+              LayoutAnimation.configureNext(
+                LayoutAnimation.Presets.easeInEaseOut,
+              );
+              setExpanded(!expanded);
+            }}
+            accessibilityRole="button"
+            accessibilityLabel={
+              expanded ? '독후감 내용 접기' : '독후감 내용 더보기'
+            }
+            style={styles.toggleButton}
+          >
+            <Text style={styles.toggleText}>
+              {expanded ? '접기' : '더보기'}
+            </Text>
+          </Pressable>
+        )}
         <Divider style={styles.divider} />
         <View style={styles.metaRow}>
           <Text style={styles.metaText}>
@@ -95,5 +151,16 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.textMuted,
     fontFamily: serifFont,
+  },
+  toggleButton: {
+    alignSelf: 'flex-end' as const,
+    marginTop: 6,
+    padding: 15,
+  },
+  toggleText: {
+    fontSize: 13,
+    color: colors.textMuted,
+    fontFamily: serifFont,
+    textDecorationLine: 'underline' as const,
   },
 });
