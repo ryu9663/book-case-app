@@ -1,5 +1,5 @@
-import { StyleSheet, Platform } from 'react-native';
-import { Card, Text, IconButton } from 'react-native-paper';
+import { StyleSheet, Platform, View } from 'react-native';
+import { Card, Text, IconButton, Divider } from 'react-native-paper';
 import { colors } from '@/lib/theme/colors';
 import type { ReviewResponseDto } from '@/api/generated/models';
 
@@ -7,6 +7,10 @@ interface Props {
   review: ReviewResponseDto;
   onEdit: () => void;
   onDelete: () => void;
+}
+
+function formatDateDisplay(dateStr: string): string {
+  return dateStr.replace(/-/g, '.');
 }
 
 export function ReviewCard({ review, onEdit, onDelete }: Props) {
@@ -27,10 +31,26 @@ export function ReviewCard({ review, onEdit, onDelete }: Props) {
         <Text numberOfLines={3} style={styles.content}>
           {review.content}
         </Text>
+        <Divider style={styles.divider} />
+        <View style={styles.metaRow}>
+          <Text style={styles.metaText}>
+            {formatDateDisplay(review.startDate)} ~{' '}
+            {formatDateDisplay(review.endDate)}
+          </Text>
+          <Text style={styles.metaText}>
+            p.{review.startPage} - p.{review.endPage}
+          </Text>
+        </View>
       </Card.Content>
     </Card>
   );
 }
+
+const serifFont = Platform.select({
+  ios: 'Georgia',
+  android: 'serif',
+  default: 'serif',
+});
 
 const styles = StyleSheet.create({
   card: {
@@ -38,8 +58,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.warmWhite,
     borderWidth: 1,
     borderColor: '#E6DCC8',
-    borderRadius: 0, // Sharp corners or very slight
-    borderBottomRightRadius: 16, // Fold effect
+    borderRadius: 0,
+    borderBottomRightRadius: 16,
     shadowColor: '#000',
     shadowOffset: { width: 1, height: 2 },
     shadowOpacity: 0.1,
@@ -50,24 +70,30 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: colors.textPrimary,
-    fontFamily: Platform.select({
-      ios: 'Georgia',
-      android: 'serif',
-      default: 'serif',
-    }),
+    fontFamily: serifFont,
   },
   content: {
     fontSize: 14,
     color: colors.textSecondary,
     lineHeight: 22,
-    fontFamily: Platform.select({
-      ios: 'Georgia',
-      android: 'serif',
-      default: 'serif',
-    }),
+    fontFamily: serifFont,
     marginTop: 4,
   },
   actions: {
     flexDirection: 'row',
+  },
+  divider: {
+    marginTop: 12,
+    marginBottom: 8,
+    backgroundColor: '#E6DCC8',
+  },
+  metaRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  metaText: {
+    fontSize: 12,
+    color: colors.textMuted,
+    fontFamily: serifFont,
   },
 });
