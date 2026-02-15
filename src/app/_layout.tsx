@@ -4,10 +4,13 @@ import { PaperProvider } from 'react-native-paper';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as SplashScreen from 'expo-splash-screen';
+import { registerTranslation } from 'react-native-paper-dates';
+import ko from 'react-native-paper-dates/src/translations/ko';
 import { AuthProvider, useAuth } from '@/features/auth/auth-context';
 import { theme } from '@/lib/theme';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 
+registerTranslation('ko', ko);
 SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient({
