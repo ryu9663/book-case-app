@@ -5,13 +5,35 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import { TextInput, Button, Text, Snackbar } from 'react-native-paper';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
-import { useReviewControllerFindOne, useReviewControllerCreate, useReviewControllerUpdate, getReviewControllerFindAllQueryKey, getReviewControllerFindOneQueryKey } from '@/api/generated/reviews/reviews';
+import { DatePickerModal } from 'react-native-paper-dates';
+import {
+  useReviewControllerFindOne,
+  useReviewControllerCreate,
+  useReviewControllerUpdate,
+  getReviewControllerFindAllQueryKey,
+  getReviewControllerFindOneQueryKey,
+} from '@/api/generated/reviews/reviews';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { colors } from '@/lib/theme/colors';
+
+function formatDate(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function formatDateDisplay(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}.${m}.${d}`;
+}
 
 export function ReviewFormScreen() {
   const { id, bookId: bookIdParam } = useLocalSearchParams<{
@@ -32,12 +54,21 @@ export function ReviewFormScreen() {
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [startDate, setStartDate] = useState<Date | undefined>();
+  const [endDate, setEndDate] = useState<Date | undefined>();
+  const [startPage, setStartPage] = useState('');
+  const [endPage, setEndPage] = useState('');
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
   const [snackbar, setSnackbar] = useState('');
 
   useEffect(() => {
     if (isEdit && existingReview) {
       setTitle(existingReview.title);
       setContent(existingReview.content);
+      setStartDate(new Date(existingReview.startDate + 'T00:00:00'));
+      setEndDate(new Date(existingReview.endDate + 'T00:00:00'));
+      setStartPage(String(existingReview.startPage));
+      setEndPage(String(existingReview.endPage));
     }
   }, [existingReview, isEdit]);
 
@@ -46,25 +77,65 @@ export function ReviewFormScreen() {
       setSnackbar('제목과 내용을 입력해주세요.');
       return;
     }
+    if (!startDate || !endDate) {
+      setSnackbar('독서 기간을 선택해주세요.');
+      return;
+    }
+    const numberedStartPage = Number(startPage);
+    const numberedEndPage = Number(endPage);
+    if (
+      !startPage ||
+      !endPage ||
+      numberedStartPage < 1 ||
+      numberedEndPage < 1
+    ) {
+      setSnackbar('페이지를 입력해주세요.');
+      return;
+    }
+    if (numberedStartPage > numberedEndPage) {
+      setSnackbar('시작 페이지가 끝 페이지보다 클 수 없습니다.');
+      return;
+    }
+
     try {
       if (isEdit && reviewId) {
         await updateReview.mutateAsync({
           bookId,
           id: reviewId,
-          data: { title, content },
+          data: {
+            title,
+            content,
+            startDate: formatDate(startDate),
+            endDate: formatDate(endDate),
+            startPage: numberedStartPage,
+            endPage: numberedEndPage,
+          },
         });
         setSnackbar('수정되었습니다.');
       } else {
         await createReview.mutateAsync({
           bookId,
-          data: { title, content },
+          data: {
+            title,
+            content,
+            startDate: formatDate(startDate),
+            endDate: formatDate(endDate),
+            startPage: numberedStartPage,
+            endPage: numberedEndPage,
+          },
         });
         setSnackbar('독후감이 작성되었습니다!');
       }
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: getReviewControllerFindAllQueryKey(bookId) }),
+        queryClient.invalidateQueries({
+          queryKey: getReviewControllerFindAllQueryKey(bookId),
+        }),
         ...(isEdit && reviewId
-          ? [queryClient.invalidateQueries({ queryKey: getReviewControllerFindOneQueryKey(bookId, reviewId) })]
+          ? [
+              queryClient.invalidateQueries({
+                queryKey: getReviewControllerFindOneQueryKey(bookId, reviewId),
+              }),
+            ]
           : []),
       ]);
       setTimeout(() => router.back(), 500);
@@ -76,6 +147,11 @@ export function ReviewFormScreen() {
   const isPending = createReview.isPending || updateReview.isPending;
 
   if (isEdit && isLoading) return <LoadingScreen />;
+
+  const dateLabel =
+    startDate && endDate
+      ? `${formatDateDisplay(startDate)} ~ ${formatDateDisplay(endDate)}`
+      : '날짜를 선택해주세요';
 
   return (
     <KeyboardAvoidingView
@@ -89,6 +165,7 @@ export function ReviewFormScreen() {
           </Text>
 
           <TextInput
+            testID="title-input"
             label="책 제목"
             value={title}
             onChangeText={setTitle}
@@ -99,7 +176,59 @@ export function ReviewFormScreen() {
             theme={{ colors: { background: 'transparent' } }}
           />
 
+          <Text style={styles.sectionLabel}>독서 기간</Text>
+          <TouchableOpacity
+            testID="date-range-button"
+            style={styles.dateButton}
+            onPress={() => setDatePickerOpen(true)}
+          >
+            <Text style={styles.dateButtonText}>{dateLabel}</Text>
+          </TouchableOpacity>
+          <DatePickerModal
+            locale="ko"
+            mode="range"
+            visible={datePickerOpen}
+            onDismiss={() => setDatePickerOpen(false)}
+            startDate={startDate}
+            endDate={endDate}
+            onConfirm={({ startDate: s, endDate: e }) => {
+              setDatePickerOpen(false);
+              if (s) setStartDate(s);
+              if (e) setEndDate(e);
+            }}
+          />
+
+          <Text style={styles.sectionLabel}>읽은 페이지</Text>
+          <View style={styles.pageRow}>
+            <TextInput
+              testID="start-page-input"
+              label="시작"
+              value={startPage}
+              onChangeText={(text) => setStartPage(text.replace(/[^0-9]/g, ''))}
+              mode="flat"
+              keyboardType="number-pad"
+              underlineColor={colors.shelfHighlight}
+              activeUnderlineColor={colors.shelfBrown}
+              style={[styles.input, styles.pageInput]}
+              theme={{ colors: { background: 'transparent' } }}
+            />
+            <Text style={styles.pageSeparator}>~</Text>
+            <TextInput
+              testID="end-page-input"
+              label="끝"
+              value={endPage}
+              onChangeText={(text) => setEndPage(text.replace(/[^0-9]/g, ''))}
+              mode="flat"
+              keyboardType="number-pad"
+              underlineColor={colors.shelfHighlight}
+              activeUnderlineColor={colors.shelfBrown}
+              style={[styles.input, styles.pageInput]}
+              theme={{ colors: { background: 'transparent' } }}
+            />
+          </View>
+
           <TextInput
+            testID="content-input"
             label="내용을 작성하세요..."
             value={content}
             onChangeText={setContent}
@@ -118,7 +247,7 @@ export function ReviewFormScreen() {
           mode="contained"
           onPress={handleSubmit}
           loading={isPending}
-          disabled={isPending || !title.trim() || !content.trim()}
+          disabled={isPending}
           style={styles.button}
           labelStyle={styles.buttonLabel}
         >
@@ -141,19 +270,18 @@ export function ReviewFormScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.shelfBrown, // Desk background
+    backgroundColor: colors.shelfBrown,
   },
   scrollContent: {
     padding: 20,
     flexGrow: 1,
   },
   paperSheet: {
-    backgroundColor: colors.paper, // Paper color
+    backgroundColor: colors.paper,
     borderRadius: 2,
     padding: 24,
     marginBottom: 24,
     minHeight: 400,
-    // Paper shadow
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -166,22 +294,71 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     marginBottom: 24,
     textAlign: 'center',
-    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
+    fontFamily: Platform.select({
+      ios: 'Georgia',
+      android: 'serif',
+      default: 'serif',
+    }),
     borderBottomWidth: 1,
-    borderBottomColor: colors.shelfHighlight, // decorative line
+    borderBottomColor: colors.shelfHighlight,
     paddingBottom: 16,
   },
   input: {
     marginBottom: 8,
     backgroundColor: 'transparent',
     fontSize: 16,
-    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
+    fontFamily: Platform.select({
+      ios: 'Georgia',
+      android: 'serif',
+      default: 'serif',
+    }),
     color: colors.textPrimary,
   },
   contentInput: {
-    minHeight: 300,
+    minHeight: 200,
     lineHeight: 24,
     textAlignVertical: 'top',
+  },
+  sectionLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.textSecondary,
+    marginTop: 12,
+    marginBottom: 8,
+    fontFamily: Platform.select({
+      ios: 'Georgia',
+      android: 'serif',
+      default: 'serif',
+    }),
+  },
+  dateButton: {
+    borderBottomWidth: 1,
+    borderBottomColor: colors.shelfHighlight,
+    paddingVertical: 12,
+    marginBottom: 8,
+  },
+  dateButtonText: {
+    fontSize: 16,
+    color: colors.textPrimary,
+    fontFamily: Platform.select({
+      ios: 'Georgia',
+      android: 'serif',
+      default: 'serif',
+    }),
+  },
+  pageRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  pageInput: {
+    flex: 1,
+    marginBottom: 0,
+  },
+  pageSeparator: {
+    fontSize: 16,
+    color: colors.textMuted,
+    marginHorizontal: 12,
   },
   button: {
     backgroundColor: colors.shelfDark,
@@ -193,6 +370,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: colors.warmWhite,
-    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
+    fontFamily: Platform.select({
+      ios: 'Georgia',
+      android: 'serif',
+      default: 'serif',
+    }),
   },
 });
