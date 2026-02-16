@@ -57,6 +57,7 @@ export function ReviewList({ bookId, onAddReview }: Props) {
           icon="plus"
           onPress={onAddReview}
           compact
+          style={styles.addButton}
         >
           작성
         </Button>
@@ -64,7 +65,6 @@ export function ReviewList({ bookId, onAddReview }: Props) {
 
       {!reviews || reviews.length === 0 ? (
         <EmptyState
-          icon="📝"
           title="아직 독후감이 없어요"
           description="첫 번째 독후감을 작성해보세요!"
         />
@@ -113,5 +113,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     color: colors.textPrimary,
+  },
+  addButton: {
+    backgroundColor: 'rgba(255,255,255,0.8)',
   },
 });

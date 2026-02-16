@@ -31,16 +31,17 @@ export function BookInfoCard({ book }: Props) {
 const styles = StyleSheet.create({
   card: {
     marginTop: 24,
-    backgroundColor: colors.paper, // Vintage paper
-    borderWidth: 1,
-    borderColor: '#D7CCC8',
+    // backgroundColor: colors.paper, // Vintage paper
+    // borderWidth: 1,
+    // borderColor: '#D7CCC8',
     // Paper shadow
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
-    elevation: 2,
+    // elevation: 2,
     borderRadius: 2, // Less rounded, more like card
+    backgroundColor: 'rgba(255, 253, 245, 0.8)',
   },
   label: {
     fontSize: 12,

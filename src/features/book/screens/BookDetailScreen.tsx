@@ -1,5 +1,11 @@
 import { useState } from 'react';
-import { View, ScrollView, StyleSheet, Platform } from 'react-native';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Platform,
+  ImageBackground,
+} from 'react-native';
 import { Appbar, Snackbar } from 'react-native-paper';
 import { router, useLocalSearchParams } from 'expo-router';
 import { BookOpenAnimation } from '../components/BookOpenAnimation';
@@ -20,11 +26,11 @@ import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { ErrorScreen } from '@/components/ui/ErrorScreen';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { colors } from '@/lib/theme/colors';
+import { transparent } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 
 export function BookDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const bookId = Number(id);
-  const { user } = useAuth();
   const {
     data: book,
     isLoading,
@@ -44,8 +50,12 @@ export function BookDetailScreen() {
     try {
       await updateBook.mutateAsync({ id: bookId, data: { title, author } });
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: getBookControllerFindOneQueryKey(bookId) }),
-        queryClient.invalidateQueries({ queryKey: getBookControllerFindAllQueryKey() }),
+        queryClient.invalidateQueries({
+          queryKey: getBookControllerFindOneQueryKey(bookId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: getBookControllerFindAllQueryKey(),
+        }),
       ]);
       setEditVisible(false);
       setSnackbar('수정되었습니다.');
@@ -57,7 +67,9 @@ export function BookDetailScreen() {
   const handleDelete = async () => {
     try {
       await deleteBook.mutateAsync({ id: bookId });
-      await queryClient.invalidateQueries({ queryKey: getBookControllerFindAllQueryKey() });
+      await queryClient.invalidateQueries({
+        queryKey: getBookControllerFindAllQueryKey(),
+      });
       router.back();
     } catch {
       setSnackbar('삭제에 실패했습니다.');
@@ -73,64 +85,75 @@ export function BookDetailScreen() {
 
   return (
     <View style={styles.container}>
-      <Appbar.Header style={styles.header}>
-        <Appbar.BackAction color="#FFF" onPress={() => router.back()} />
-        <Appbar.Content title={book.title} titleStyle={styles.headerTitle} />
-        <Appbar.Action
-          icon="pencil"
-          color="#FFF"
-          onPress={() => setEditVisible(true)}
-        />
-        <Appbar.Action
-          icon="delete"
-          color="#FFF"
-          onPress={() => setDeleteVisible(true)}
-        />
-      </Appbar.Header>
-
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.coverSection}>
-          <BookOpenAnimation>
-            <BookCover title={book.title} author={book.author} thumbnail={book.thumbnail} />
-          </BookOpenAnimation>
-        </View>
-
-        <BookInfoCard book={book} />
-
-        <View style={styles.reviewSection}>
-          <ReviewList
-            bookId={bookId}
-            onAddReview={() =>
-              router.push(`/(main)/review/create?bookId=${bookId}`)
-            }
-          />
-        </View>
-      </ScrollView>
-
-      <BookEditDialog
-        visible={editVisible}
-        book={book}
-        onSave={handleSave}
-        onDismiss={() => setEditVisible(false)}
-        isLoading={updateBook.isPending}
-      />
-
-      <ConfirmDialog
-        visible={deleteVisible}
-        title="책 삭제"
-        message={`"${book.title}"을(를) 삭제하시겠습니까?\n관련 독후감도 함께 삭제됩니다.`}
-        confirmLabel="삭제"
-        onConfirm={handleDelete}
-        onDismiss={() => setDeleteVisible(false)}
-      />
-
-      <Snackbar
-        visible={!!snackbar}
-        onDismiss={() => setSnackbar('')}
-        duration={2000}
+      <ImageBackground
+        // source={require('@assets/login/background.webp')}
+        source={book.thumbnail || require('@assets/login/background.webp')}
+        style={styles.backgroundImage}
+        resizeMode="cover"
       >
-        {snackbar}
-      </Snackbar>
+        <View style={styles.whiteOverlay} />
+        <Appbar.Header style={styles.header}>
+          <Appbar.BackAction
+            color={colors.shelfBrown}
+            onPress={() => router.back()}
+          />
+          <Appbar.Content title={book.title} titleStyle={styles.headerTitle} />
+          <Appbar.Action
+            icon="pencil"
+            color={colors.shelfBrown}
+            onPress={() => setEditVisible(true)}
+          />
+          <Appbar.Action
+            icon="delete"
+            color={colors.shelfBrown}
+            onPress={() => setDeleteVisible(true)}
+          />
+        </Appbar.Header>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          {/* <View style={styles.coverSection}>
+            <BookOpenAnimation>
+              <BookCover
+                title={book.title}
+                author={book.author}
+                thumbnail={book.thumbnail}
+              />
+            </BookOpenAnimation>
+          </View> */}
+
+          {/* <BookInfoCard book={book} /> */}
+
+          <View style={styles.reviewSection}>
+            <ReviewList
+              bookId={bookId}
+              onAddReview={() =>
+                router.push(`/(main)/review/create?bookId=${bookId}`)
+              }
+            />
+          </View>
+        </ScrollView>
+        <BookEditDialog
+          visible={editVisible}
+          book={book}
+          onSave={handleSave}
+          onDismiss={() => setEditVisible(false)}
+          isLoading={updateBook.isPending}
+        />
+        <ConfirmDialog
+          visible={deleteVisible}
+          title="책 삭제"
+          message={`"${book.title}"을(를) 삭제하시겠습니까?\n관련 독후감도 함께 삭제됩니다.`}
+          confirmLabel="삭제"
+          onConfirm={handleDelete}
+          onDismiss={() => setDeleteVisible(false)}
+        />
+        <Snackbar
+          visible={!!snackbar}
+          onDismiss={() => setSnackbar('')}
+          duration={2000}
+        >
+          {snackbar}
+        </Snackbar>
+      </ImageBackground>
     </View>
   );
 }
@@ -138,16 +161,25 @@ export function BookDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.shelfBrown, // Desk texture
+  },
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+  },
+  whiteOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(255, 253, 245, 0.7)',
   },
   header: {
-    backgroundColor: colors.shelfBrown,
+    backgroundColor: 'rgba(255,255,255,0.3)',
     elevation: 0,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255,255,255,0.1)',
   },
   headerTitle: {
-    color: '#FFF8E1',
+    color: colors.shelfBrown,
     fontFamily: Platform.select({
       ios: 'Georgia',
       android: 'serif',

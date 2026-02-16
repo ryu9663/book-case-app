@@ -123,7 +123,7 @@ export function BookshelfScreen() {
             <MaterialCommunityIcons
               name="logout"
               size={20}
-              color={colors.contentBg}
+              color={colors.shelfBrown}
             />
           </Pressable>
         </View>
@@ -255,14 +255,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: `${colors.headerBg}E6`, // 90% opacity
+    // backgroundColor: `${colors.headerBg}E6`, // 90% opacity
+    backgroundColor: 'rgba(255,255,255,0.3)',
+
     zIndex: 20,
   },
+  // header: {
+  //   backgroundColor: 'rgba(255,255,255,0.3)',
+  //   elevation: 0,
+  //   borderBottomWidth: 1,
+  //   borderBottomColor: 'rgba(255,255,255,0.1)',
+  // },
   headerTitle: {
     fontSize: 22,
     fontWeight: '700',
     fontFamily: serifFont,
-    color: colors.contentBg,
+    color: colors.shelfBrown,
   },
   logoutButton: {
     padding: 10,

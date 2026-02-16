@@ -66,7 +66,8 @@ export function ReviewCard({ review, onEdit, onDelete }: Props) {
           onTextLayout={handleTextLayout}
           style={styles.content}
         >
-          {review.content}
+          <Text style={styles.firstLetter}>{review.content.charAt(0)}</Text>
+          {review.content.slice(1)}
         </Text>
         {isTruncatable && (
           <Pressable
@@ -134,6 +135,12 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     fontFamily: serifFont,
     marginTop: 4,
+  },
+  firstLetter: {
+    fontSize: 28,
+    lineHeight: 34,
+    fontFamily: serifFont,
+    color: colors.textPrimary,
   },
   actions: {
     flexDirection: 'row',
