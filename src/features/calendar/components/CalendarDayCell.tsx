@@ -30,9 +30,13 @@ export function CalendarDayCell({
   isSelected,
 }: CalendarDayCellProps) {
   const dayData = dateToBookMap[date.dateString];
-  const books = dayData?.books ?? [];
-  const visibleBooks = books.slice(0, MAX_THUMBNAILS);
-  const overflow = books.length - MAX_THUMBNAILS;
+  const allBooks = dayData?.books ?? [];
+  const uniqueBooks = allBooks.filter(
+    (book, index, self) =>
+      self.findIndex((b) => b.bookId === book.bookId) === index,
+  );
+  const visibleBooks = uniqueBooks.slice(0, MAX_THUMBNAILS);
+  const overflow = uniqueBooks.length - MAX_THUMBNAILS;
   const isToday = state === 'today';
   const isDisabled = state === 'disabled';
 

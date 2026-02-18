@@ -20,8 +20,28 @@ jest.mock('expo-router', () => ({
 }));
 
 const books: CalendarBookInfo[] = [
-  { bookId: 1, title: '책1', author: '저자1', thumbnail: 'thumb1.jpg' },
-  { bookId: 2, title: '책2', author: '저자2', thumbnail: null },
+  {
+    bookId: 1,
+    title: '책1',
+    author: '저자1',
+    thumbnail: 'thumb1.jpg',
+    reviewId: 10,
+    reviewTitle: '독후감1',
+    reviewContent: '좋은 책이었다',
+    startPage: 1,
+    endPage: 100,
+  },
+  {
+    bookId: 2,
+    title: '책2',
+    author: '저자2',
+    thumbnail: null,
+    reviewId: 20,
+    reviewTitle: '독후감2',
+    reviewContent: '',
+    startPage: 50,
+    endPage: 150,
+  },
 ];
 
 describe('DayBookList', () => {
@@ -72,13 +92,38 @@ describe('DayBookList', () => {
     const { getByTestId } = render(
       <DayBookList selectedDate="2024-01-15" books={books} />,
     );
-    expect(getByTestId('book-thumbnail-1')).toBeTruthy();
+    expect(getByTestId('book-thumbnail-10')).toBeTruthy();
   });
 
   it('썸네일이 없으면 스파인 컬러 fallback 렌더링', () => {
     const { getByTestId } = render(
       <DayBookList selectedDate="2024-01-15" books={books} />,
     );
-    expect(getByTestId('book-spine-2')).toBeTruthy();
+    expect(getByTestId('book-spine-20')).toBeTruthy();
+  });
+
+  it('독후감 제목과 페이지 범위를 표시', () => {
+    const { getByText } = render(
+      <DayBookList selectedDate="2024-01-15" books={books} />,
+    );
+    expect(getByText('독후감1')).toBeTruthy();
+    expect(getByText('p.1 - p.100')).toBeTruthy();
+    expect(getByText('독후감2')).toBeTruthy();
+    expect(getByText('p.50 - p.150')).toBeTruthy();
+  });
+
+  it('독후감 본문이 있으면 미리보기 표시', () => {
+    const { getByText } = render(
+      <DayBookList selectedDate="2024-01-15" books={books} />,
+    );
+    expect(getByText('좋은 책이었다')).toBeTruthy();
+  });
+
+  it('독후감 본문이 비어있으면 미리보기 미표시', () => {
+    const { queryByText } = render(
+      <DayBookList selectedDate="2024-01-15" books={[books[1]]} />,
+    );
+    // book2의 reviewContent가 빈 문자열이므로 미리보기 없음
+    expect(queryByText('p.50 - p.150')).toBeTruthy();
   });
 });

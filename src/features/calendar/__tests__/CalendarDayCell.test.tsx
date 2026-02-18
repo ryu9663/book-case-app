@@ -50,8 +50,28 @@ describe('CalendarDayCell', () => {
     const dateToBookMap: Record<string, CalendarDayData> = {
       '2024-01-15': {
         books: [
-          { bookId: 1, title: '책1', author: '저자1', thumbnail: 'thumb.jpg' },
-          { bookId: 2, title: '책2', author: '저자2', thumbnail: null },
+          {
+            bookId: 1,
+            title: '책1',
+            author: '저자1',
+            thumbnail: 'thumb.jpg',
+            reviewId: 10,
+            reviewTitle: '독후감1',
+            reviewContent: '내용1',
+            startPage: 1,
+            endPage: 50,
+          },
+          {
+            bookId: 2,
+            title: '책2',
+            author: '저자2',
+            thumbnail: null,
+            reviewId: 20,
+            reviewTitle: '독후감2',
+            reviewContent: '내용2',
+            startPage: 1,
+            endPage: 100,
+          },
         ],
       },
     };
@@ -74,6 +94,11 @@ describe('CalendarDayCell', () => {
       title: `책${i + 1}`,
       author: `저자${i + 1}`,
       thumbnail: null,
+      reviewId: 100 + i,
+      reviewTitle: `독후감${i + 1}`,
+      reviewContent: `내용${i + 1}`,
+      startPage: 1,
+      endPage: 50,
     }));
 
     const dateToBookMap: Record<string, CalendarDayData> = {

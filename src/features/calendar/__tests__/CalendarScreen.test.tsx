@@ -70,12 +70,44 @@ const mockUseCalendarData = useCalendarData as jest.MockedFunction<
 const dateToBookMapWithData = {
   '2024-01-15': {
     books: [
-      { bookId: 1, title: '책1', author: '저자1', thumbnail: 'thumb.jpg' },
-      { bookId: 2, title: '책2', author: '저자2', thumbnail: null },
+      {
+        bookId: 1,
+        title: '책1',
+        author: '저자1',
+        thumbnail: 'thumb.jpg',
+        reviewId: 10,
+        reviewTitle: '독후감1',
+        reviewContent: '내용1',
+        startPage: 1,
+        endPage: 50,
+      },
+      {
+        bookId: 2,
+        title: '책2',
+        author: '저자2',
+        thumbnail: null,
+        reviewId: 20,
+        reviewTitle: '독후감2',
+        reviewContent: '내용2',
+        startPage: 1,
+        endPage: 100,
+      },
     ],
   },
   '2024-01-16': {
-    books: [{ bookId: 3, title: '책3', author: '저자3', thumbnail: null }],
+    books: [
+      {
+        bookId: 3,
+        title: '책3',
+        author: '저자3',
+        thumbnail: null,
+        reviewId: 30,
+        reviewTitle: '독후감3',
+        reviewContent: '내용3',
+        startPage: 1,
+        endPage: 200,
+      },
+    ],
   },
 };
 

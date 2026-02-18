@@ -22,7 +22,7 @@ export function DayBookList({ selectedDate, books }: DayBookListProps) {
       ) : (
         books.map((book) => (
           <Pressable
-            key={book.bookId}
+            key={book.reviewId}
             style={styles.bookItem}
             onPress={() =>
               router.push(`/(main)/(bookshelf)/book/${book.bookId}`)
@@ -30,13 +30,13 @@ export function DayBookList({ selectedDate, books }: DayBookListProps) {
           >
             {book.thumbnail ? (
               <Image
-                testID={`book-thumbnail-${book.bookId}`}
+                testID={`book-thumbnail-${book.reviewId}`}
                 source={{ uri: book.thumbnail }}
                 style={styles.thumbnail}
               />
             ) : (
               <View
-                testID={`book-spine-${book.bookId}`}
+                testID={`book-spine-${book.reviewId}`}
                 style={[
                   styles.thumbnail,
                   { backgroundColor: getSpineColor(book.title) },
@@ -50,6 +50,17 @@ export function DayBookList({ selectedDate, books }: DayBookListProps) {
               <Text style={styles.bookAuthor} numberOfLines={1}>
                 {book.author}
               </Text>
+              <Text style={styles.reviewTitle} numberOfLines={1}>
+                {book.reviewTitle}
+              </Text>
+              <Text style={styles.pageRange}>
+                p.{book.startPage} - p.{book.endPage}
+              </Text>
+              {book.reviewContent.length > 0 && (
+                <Text style={styles.reviewContent} numberOfLines={2}>
+                  {book.reviewContent}
+                </Text>
+              )}
             </View>
           </Pressable>
         ))
@@ -102,5 +113,22 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.textSecondary,
     marginTop: 2,
+  },
+  reviewTitle: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: colors.shelfBrown,
+    marginTop: 6,
+  },
+  pageRange: {
+    fontSize: 11,
+    color: colors.textMuted,
+    marginTop: 2,
+  },
+  reviewContent: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    marginTop: 4,
+    lineHeight: 18,
   },
 });

@@ -42,12 +42,14 @@ describe('buildDateToBookMap', () => {
     thumbnail: thumbnail ?? null,
   });
 
+  let reviewIdCounter = 1;
   const makeReview = (
     bookId: number,
     startDate: string,
     endDate: string,
+    overrides?: Partial<ReviewResponseDto>,
   ): ReviewResponseDto => ({
-    id: 1,
+    id: reviewIdCounter++,
     title: 'Review',
     content: 'Content',
     bookId,
@@ -56,6 +58,11 @@ describe('buildDateToBookMap', () => {
     endDate,
     startPage: 1,
     endPage: 100,
+    ...overrides,
+  });
+
+  beforeEach(() => {
+    reviewIdCounter = 1;
   });
 
   it('리뷰가 없으면 빈 맵 반환', () => {
@@ -69,15 +76,20 @@ describe('buildDateToBookMap', () => {
 
     const result = buildDateToBookMap(books, reviewsMap);
 
-    expect(result['2024-01-01']?.books).toEqual([
-      { bookId: 1, title: '책1', author: 'Author', thumbnail: 'thumb.jpg' },
-    ]);
-    expect(result['2024-01-02']?.books).toEqual([
-      { bookId: 1, title: '책1', author: 'Author', thumbnail: 'thumb.jpg' },
-    ]);
-    expect(result['2024-01-03']?.books).toEqual([
-      { bookId: 1, title: '책1', author: 'Author', thumbnail: 'thumb.jpg' },
-    ]);
+    const expected = {
+      bookId: 1,
+      title: '책1',
+      author: 'Author',
+      thumbnail: 'thumb.jpg',
+      reviewId: 1,
+      reviewTitle: 'Review',
+      reviewContent: 'Content',
+      startPage: 1,
+      endPage: 100,
+    };
+    expect(result['2024-01-01']?.books).toEqual([expected]);
+    expect(result['2024-01-02']?.books).toEqual([expected]);
+    expect(result['2024-01-03']?.books).toEqual([expected]);
     expect(result['2024-01-04']).toBeUndefined();
   });
 
@@ -95,7 +107,7 @@ describe('buildDateToBookMap', () => {
     expect(result['2024-01-03']?.books).toHaveLength(1);
   });
 
-  it('같은 책에 여러 리뷰가 있어도 날짜별로 중복 없이 매핑', () => {
+  it('같은 책에 여러 리뷰가 있으면 리뷰별로 별도 표시', () => {
     const books = [makeBook(1, '책1')];
     const reviewsMap = {
       1: [
@@ -106,8 +118,10 @@ describe('buildDateToBookMap', () => {
 
     const result = buildDateToBookMap(books, reviewsMap);
 
-    // 1월 2일에 두 리뷰가 겹치지만 같은 책이므로 한 번만 등장
-    expect(result['2024-01-02']?.books).toHaveLength(1);
+    // 1월 2일에 두 리뷰가 겹치므로 같은 책이라도 2개 엔트리
+    expect(result['2024-01-02']?.books).toHaveLength(2);
+    expect(result['2024-01-01']?.books).toHaveLength(1);
+    expect(result['2024-01-03']?.books).toHaveLength(1);
   });
 
   it('reviewsMap에 없는 bookId는 무시', () => {
@@ -121,13 +135,27 @@ describe('buildDateToBookMap', () => {
     expect(result['2024-01-01']?.books).toHaveLength(1);
   });
 
-  it('bookInfo에 author가 포함됨', () => {
+  it('bookInfo에 author와 review 필드가 포함됨', () => {
     const books = [makeBook(1, '책1', 'thumb.jpg')];
-    const reviewsMap = { 1: [makeReview(1, '2024-01-01', '2024-01-01')] };
+    const reviewsMap = {
+      1: [
+        makeReview(1, '2024-01-01', '2024-01-01', {
+          title: '좋은 책',
+          content: '인상 깊었다',
+          startPage: 10,
+          endPage: 50,
+        }),
+      ],
+    };
 
     const result = buildDateToBookMap(books, reviewsMap);
+    const entry = result['2024-01-01']?.books[0];
 
-    expect(result['2024-01-01']?.books[0]).toHaveProperty('author', 'Author');
+    expect(entry).toHaveProperty('author', 'Author');
+    expect(entry).toHaveProperty('reviewTitle', '좋은 책');
+    expect(entry).toHaveProperty('reviewContent', '인상 깊었다');
+    expect(entry).toHaveProperty('startPage', 10);
+    expect(entry).toHaveProperty('endPage', 50);
   });
 });
 

@@ -3,6 +3,11 @@ export interface CalendarBookInfo {
   title: string;
   author: string;
   thumbnail: string | null | undefined;
+  reviewId: number;
+  reviewTitle: string;
+  reviewContent: string;
+  startPage: number;
+  endPage: number;
 }
 
 export interface CalendarDayData {

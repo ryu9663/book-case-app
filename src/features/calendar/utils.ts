@@ -29,25 +29,25 @@ export function buildDateToBookMap(
     const book = bookMap.get(bookId);
     if (!book || !reviews.length) continue;
 
-    const bookInfo: CalendarBookInfo = {
-      bookId: book.id,
-      title: book.title,
-      author: book.author,
-      thumbnail: book.thumbnail,
-    };
-
     for (const review of reviews) {
+      const bookInfo: CalendarBookInfo = {
+        bookId: book.id,
+        title: book.title,
+        author: book.author,
+        thumbnail: book.thumbnail,
+        reviewId: review.id,
+        reviewTitle: review.title,
+        reviewContent: review.content,
+        startPage: review.startPage,
+        endPage: review.endPage,
+      };
+
       const dates = getDateRange(review.startDate, review.endDate);
       for (const date of dates) {
         if (!result[date]) {
           result[date] = { books: [] };
         }
-        const alreadyAdded = result[date].books.some(
-          (b) => b.bookId === bookId,
-        );
-        if (!alreadyAdded) {
-          result[date].books.push(bookInfo);
-        }
+        result[date].books.push(bookInfo);
       }
     }
   }
