@@ -1,5 +1,5 @@
-import { getDateRange, buildDateToBookMap } from '../utils';
-import { BookResponseDto, ReviewResponseDto } from '@/api/generated/model';
+import { BookResponseDto, ReviewResponseDto } from '@/api/generated/models';
+import { getDateRange, buildDateToBookMap, formatKoreanDate } from '../utils';
 
 describe('getDateRange', () => {
   it('같은 날짜면 해당 날짜 하나만 반환', () => {
@@ -30,7 +30,11 @@ describe('getDateRange', () => {
 });
 
 describe('buildDateToBookMap', () => {
-  const makeBook = (id: number, title: string, thumbnail?: string | null): BookResponseDto => ({
+  const makeBook = (
+    id: number,
+    title: string,
+    thumbnail?: string | null,
+  ): BookResponseDto => ({
     id,
     title,
     author: 'Author',
@@ -55,10 +59,7 @@ describe('buildDateToBookMap', () => {
   });
 
   it('리뷰가 없으면 빈 맵 반환', () => {
-    const result = buildDateToBookMap(
-      [makeBook(1, '책1')],
-      { 1: [] },
-    );
+    const result = buildDateToBookMap([makeBook(1, '책1')], { 1: [] });
     expect(result).toEqual({});
   });
 
@@ -69,13 +70,13 @@ describe('buildDateToBookMap', () => {
     const result = buildDateToBookMap(books, reviewsMap);
 
     expect(result['2024-01-01']?.books).toEqual([
-      { bookId: 1, title: '책1', thumbnail: 'thumb.jpg' },
+      { bookId: 1, title: '책1', author: 'Author', thumbnail: 'thumb.jpg' },
     ]);
     expect(result['2024-01-02']?.books).toEqual([
-      { bookId: 1, title: '책1', thumbnail: 'thumb.jpg' },
+      { bookId: 1, title: '책1', author: 'Author', thumbnail: 'thumb.jpg' },
     ]);
     expect(result['2024-01-03']?.books).toEqual([
-      { bookId: 1, title: '책1', thumbnail: 'thumb.jpg' },
+      { bookId: 1, title: '책1', author: 'Author', thumbnail: 'thumb.jpg' },
     ]);
     expect(result['2024-01-04']).toBeUndefined();
   });
@@ -118,5 +119,28 @@ describe('buildDateToBookMap', () => {
     const result = buildDateToBookMap(books, reviewsMap);
 
     expect(result['2024-01-01']?.books).toHaveLength(1);
+  });
+
+  it('bookInfo에 author가 포함됨', () => {
+    const books = [makeBook(1, '책1', 'thumb.jpg')];
+    const reviewsMap = { 1: [makeReview(1, '2024-01-01', '2024-01-01')] };
+
+    const result = buildDateToBookMap(books, reviewsMap);
+
+    expect(result['2024-01-01']?.books[0]).toHaveProperty('author', 'Author');
+  });
+});
+
+describe('formatKoreanDate', () => {
+  it('"2024-01-15" → "2024년 1월 15일"', () => {
+    expect(formatKoreanDate('2024-01-15')).toBe('2024년 1월 15일');
+  });
+
+  it('앞자리 0을 제거', () => {
+    expect(formatKoreanDate('2024-03-05')).toBe('2024년 3월 5일');
+  });
+
+  it('12월 31일 처리', () => {
+    expect(formatKoreanDate('2024-12-31')).toBe('2024년 12월 31일');
   });
 });

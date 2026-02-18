@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { colors } from '@/lib/theme/colors';
 import { CalendarThumbnail } from './CalendarThumbnail';
 import { DateToBookMap } from '../types';
@@ -16,6 +16,8 @@ interface CalendarDayCellProps {
   date: DateData;
   state: string;
   dateToBookMap: DateToBookMap;
+  onPress?: (dateString: string) => void;
+  isSelected?: boolean;
 }
 
 const MAX_THUMBNAILS = 4;
@@ -24,6 +26,8 @@ export function CalendarDayCell({
   date,
   state,
   dateToBookMap,
+  onPress,
+  isSelected,
 }: CalendarDayCellProps) {
   const dayData = dateToBookMap[date.dateString];
   const books = dayData?.books ?? [];
@@ -32,10 +36,21 @@ export function CalendarDayCell({
   const isToday = state === 'today';
   const isDisabled = state === 'disabled';
 
+  const testID = isSelected
+    ? 'calendar-day-cell-selected'
+    : isToday
+      ? 'calendar-day-cell-today'
+      : undefined;
+
   return (
-    <View
-      testID={isToday ? 'calendar-day-cell-today' : undefined}
-      style={[styles.container, isToday && styles.todayContainer]}
+    <Pressable
+      testID={testID}
+      style={[
+        styles.container,
+        isToday && styles.todayContainer,
+        isSelected && styles.selectedContainer,
+      ]}
+      onPress={() => onPress?.(date.dateString)}
     >
       <Text
         style={[
@@ -60,7 +75,7 @@ export function CalendarDayCell({
           )}
         </View>
       )}
-    </View>
+    </Pressable>
   );
 }
 
@@ -75,6 +90,12 @@ const styles = StyleSheet.create({
   todayContainer: {
     backgroundColor: 'rgba(93, 64, 55, 0.1)',
     borderRadius: 8,
+  },
+  selectedContainer: {
+    borderColor: colors.shelfBrown,
+    borderWidth: 1.5,
+    borderRadius: 8,
+    backgroundColor: 'rgba(93, 64, 55, 0.06)',
   },
   dayText: {
     fontSize: 13,

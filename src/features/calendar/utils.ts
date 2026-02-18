@@ -1,4 +1,4 @@
-import { BookResponseDto, ReviewResponseDto } from '@/api/generated/model';
+import { BookResponseDto, ReviewResponseDto } from '@/api/generated/models';
 import { CalendarBookInfo, DateToBookMap } from './types';
 
 export function getDateRange(startDate: string, endDate: string): string[] {
@@ -32,6 +32,7 @@ export function buildDateToBookMap(
     const bookInfo: CalendarBookInfo = {
       bookId: book.id,
       title: book.title,
+      author: book.author,
       thumbnail: book.thumbnail,
     };
 
@@ -52,4 +53,9 @@ export function buildDateToBookMap(
   }
 
   return result;
+}
+
+export function formatKoreanDate(dateString: string): string {
+  const [year, month, day] = dateString.split('-');
+  return `${year}년 ${Number(month)}월 ${Number(day)}일`;
 }

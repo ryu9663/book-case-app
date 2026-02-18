@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react-native';
+import { render, fireEvent } from '@testing-library/react-native';
 import { CalendarDayCell } from '../components/CalendarDayCell';
 import { CalendarDayData } from '../types';
 
@@ -7,6 +7,8 @@ jest.mock('@/lib/theme/colors', () => ({
   colors: {
     textPrimary: '#3E2723',
     textMuted: '#8D6E63',
+    shelfBrown: '#5D4037',
+    cream: '#F5F5DC',
   },
   getSpineColor: (title: string) => '#AA5533',
 }));
@@ -48,8 +50,8 @@ describe('CalendarDayCell', () => {
     const dateToBookMap: Record<string, CalendarDayData> = {
       '2024-01-15': {
         books: [
-          { bookId: 1, title: '책1', thumbnail: 'thumb.jpg' },
-          { bookId: 2, title: '책2', thumbnail: null },
+          { bookId: 1, title: '책1', author: '저자1', thumbnail: 'thumb.jpg' },
+          { bookId: 2, title: '책2', author: '저자2', thumbnail: null },
         ],
       },
     };
@@ -70,6 +72,7 @@ describe('CalendarDayCell', () => {
     const books = Array.from({ length: 6 }, (_, i) => ({
       bookId: i + 1,
       title: `책${i + 1}`,
+      author: `저자${i + 1}`,
       thumbnail: null,
     }));
 
@@ -113,5 +116,46 @@ describe('CalendarDayCell', () => {
     );
 
     expect(getByTestId('calendar-day-cell-today')).toBeTruthy();
+  });
+
+  it('onPress 호출 시 dateString 전달', () => {
+    const onPress = jest.fn();
+    const { getByText } = render(
+      <CalendarDayCell
+        date={baseDate}
+        state=""
+        dateToBookMap={{}}
+        onPress={onPress}
+      />,
+    );
+
+    fireEvent.press(getByText('15'));
+    expect(onPress).toHaveBeenCalledWith('2024-01-15');
+  });
+
+  it('onPress가 없으면 터치해도 에러 없음', () => {
+    const { getByText } = render(
+      <CalendarDayCell date={baseDate} state="" dateToBookMap={{}} />,
+    );
+
+    expect(() => fireEvent.press(getByText('15'))).not.toThrow();
+  });
+
+  it('isSelected일 때 선택 스타일 적용', () => {
+    const { getByTestId } = render(
+      <CalendarDayCell
+        date={baseDate}
+        state=""
+        dateToBookMap={{}}
+        isSelected
+      />,
+    );
+
+    const container = getByTestId('calendar-day-cell-selected');
+    expect(container.props.style).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ borderColor: '#5D4037' }),
+      ]),
+    );
   });
 });

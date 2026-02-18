@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { ScrollView, StyleSheet } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { colors } from '@/lib/theme/colors';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
@@ -7,6 +7,7 @@ import { ErrorScreen } from '@/components/ui/ErrorScreen';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { useCalendarData } from '../hooks/useCalendarData';
 import { CalendarDayCell } from '../components/CalendarDayCell';
+import { DayBookList } from '../components/DayBookList';
 
 LocaleConfig.locales['ko'] = {
   monthNames: [
@@ -28,6 +29,11 @@ LocaleConfig.defaultLocale = 'ko';
 export function CalendarScreen() {
   const { dateToBookMap, isLoading, isError, isEmpty, refetch } =
     useCalendarData();
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+
+  const handleDayPress = useCallback((dateString: string) => {
+    setSelectedDate((prev) => (prev === dateString ? null : dateString));
+  }, []);
 
   if (isLoading) {
     return <LoadingScreen message="독서 기록을 불러오는 중..." />;
@@ -52,14 +58,20 @@ export function CalendarScreen() {
     );
   }
 
+  const selectedBooks = selectedDate
+    ? (dateToBookMap[selectedDate]?.books ?? [])
+    : [];
+
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Calendar
         dayComponent={({ date, state }) => (
           <CalendarDayCell
             date={date!}
             state={state ?? ''}
             dateToBookMap={dateToBookMap}
+            onPress={handleDayPress}
+            isSelected={date?.dateString === selectedDate}
           />
         )}
         theme={{
@@ -70,7 +82,8 @@ export function CalendarScreen() {
           textSectionTitleColor: colors.textSecondary,
         }}
       />
-    </View>
+      <DayBookList selectedDate={selectedDate} books={selectedBooks} />
+    </ScrollView>
   );
 }
 

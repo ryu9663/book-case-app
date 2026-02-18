@@ -2,16 +2,18 @@ import { useMemo } from 'react';
 import { useQueries } from '@tanstack/react-query';
 import { useBookControllerFindAll } from '@/api/generated/books/books';
 import { getReviewControllerFindAllQueryOptions } from '@/api/generated/reviews/reviews';
-import { ReviewResponseDto } from '@/api/generated/model';
 import { buildDateToBookMap } from '../utils';
 import { DateToBookMap } from '../types';
+import { ReviewResponseDto } from '@/api/generated/models';
 
 export function useCalendarData() {
   const booksQuery = useBookControllerFindAll();
   const books = booksQuery.data ?? [];
 
   const reviewQueries = useQueries({
-    queries: books.map((book) => getReviewControllerFindAllQueryOptions(book.id)),
+    queries: books.map((book) =>
+      getReviewControllerFindAllQueryOptions(book.id),
+    ),
   });
 
   const reviewsLoading = reviewQueries.some((q) => q.isLoading);
@@ -34,7 +36,8 @@ export function useCalendarData() {
     return buildDateToBookMap(books, reviewsMap);
   }, [isLoading, isError, books, reviewQueries]);
 
-  const isEmpty = !isLoading && !isError && Object.keys(dateToBookMap).length === 0;
+  const isEmpty =
+    !isLoading && !isError && Object.keys(dateToBookMap).length === 0;
 
   const refetch = () => {
     booksQuery.refetch();

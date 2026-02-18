@@ -1,8 +1,7 @@
-import { BookResponseDto } from '@/api/generated/model';
-
 export interface CalendarBookInfo {
   bookId: number;
   title: string;
+  author: string;
   thumbnail: string | null | undefined;
 }
 
