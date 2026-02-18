@@ -8,13 +8,18 @@
 ├── (auth)/
 │   ├── login.tsx → LoginScreen
 │   └── register.tsx → RegisterScreen
-└── (main)/
-    ├── index.tsx → BookshelfScreen
-    ├── add-book.tsx → AddBookScreen
-    ├── book/[id].tsx → BookDetailScreen
-    └── review/
-        ├── create.tsx → ReviewFormScreen (생성)
-        └── [id].tsx → ReviewFormScreen (수정)
+└── (main)/                          ← Tabs (하단 탭 바)
+    ├── (bookshelf)/                 ← 탭 1: 나의 서재 (내부 Stack)
+    │   ├── index.tsx → BookshelfScreen
+    │   ├── add-book.tsx → AddBookScreen
+    │   ├── book/[id].tsx → BookDetailScreen
+    │   └── review/
+    │       ├── create.tsx → ReviewFormScreen (생성)
+    │       └── [id].tsx → ReviewFormScreen (수정)
+    ├── calendar/                    ← 탭 2: 캘린더
+    │   └── index.tsx → CalendarScreen (준비 중)
+    └── settings/                    ← 탭 3: 설정
+        └── index.tsx → SettingsScreen (로그아웃)
 ```
 
 ## 인증 흐름
@@ -27,19 +32,24 @@
 ## 메인 흐름
 
 ```
-BookshelfScreen (책장)
-├── 책 클릭 → BookDetailScreen
-│   ├── 수정: BookEditDialog → PATCH /books/{id}
-│   ├── 삭제: ConfirmDialog → DELETE /books/{id} → router.back()
-│   └── 독후감 추가 → ReviewFormScreen (create)
-│       └── POST /reviews/{bookId} → router.back()
-│   └── 독후감 수정 → ReviewFormScreen (update)
-│       └── PATCH /reviews/{bookId}/{id} → router.back()
-├── "+" 버튼 → AddBookScreen
-│   ├── 검색: GET /books/search?title=...
-│   ├── 결과 선택 or 직접 입력 → POST /books → router.back()
-│   └── 검색 결과 없으면 수동 입력 모드
-└── 로그아웃 → storage.clear() → /(auth)/login
+[하단 탭 바]
+├── 나의 서재 (bookshelf) 탭
+│   └── BookshelfScreen (책장)
+│       ├── 책 클릭 → BookDetailScreen
+│       │   ├── 수정: BookEditDialog → PATCH /books/{id}
+│       │   ├── 삭제: ConfirmDialog → DELETE /books/{id} → router.back()
+│       │   └── 독후감 추가 → ReviewFormScreen (create)
+│       │       └── POST /reviews/{bookId} → router.back()
+│       │   └── 독후감 수정 → ReviewFormScreen (update)
+│       │       └── PATCH /reviews/{bookId}/{id} → router.back()
+│       └── "+" 버튼 → AddBookScreen
+│           ├── 검색: GET /books/search?title=...
+│           ├── 결과 선택 or 직접 입력 → POST /books → router.back()
+│           └── 검색 결과 없으면 수동 입력 모드
+├── 캘린더 탭 → (준비 중)
+└── 설정 탭 → SettingsScreen
+    ├── 사용자 이메일 표시
+    └── 로그아웃 → storage.clear() → /(auth)/login
 ```
 
 ## 쿼리 무효화 맵

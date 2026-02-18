@@ -24,7 +24,6 @@ const mockBooks = [
 const mockRefetch = jest.fn();
 const mockDeleteMutateAsync = jest.fn();
 const mockInvalidateQueries = jest.fn();
-const mockLogout = jest.fn();
 
 let mockFindAllReturn: {
   data: typeof mockBooks | undefined;
@@ -47,10 +46,6 @@ jest.mock('@tanstack/react-query', () => ({
   useQueryClient: () => ({
     invalidateQueries: mockInvalidateQueries,
   }),
-}));
-
-jest.mock('@/features/auth/auth-context', () => ({
-  useAuth: () => ({ logout: mockLogout }),
 }));
 
 jest.mock('expo-router', () => ({
@@ -247,7 +242,7 @@ describe('BookshelfScreen', () => {
 
       fireEvent.press(screen.getByTestId('add-book-button'));
 
-      expect(router.push).toHaveBeenCalledWith('/(main)/add-book');
+      expect(router.push).toHaveBeenCalledWith('/(main)/(bookshelf)/add-book');
     });
   });
 
@@ -259,7 +254,7 @@ describe('BookshelfScreen', () => {
 
       fireEvent.press(screen.getByTestId('book-1'));
 
-      expect(router.push).toHaveBeenCalledWith('/(main)/book/1');
+      expect(router.push).toHaveBeenCalledWith('/(main)/(bookshelf)/book/1');
     });
   });
 
@@ -328,15 +323,4 @@ describe('BookshelfScreen', () => {
     });
   });
 
-  // ===== 로그아웃 =====
-
-  describe('로그아웃', () => {
-    it('로그아웃 버튼을 누르면 logout을 호출한다', () => {
-      render(<BookshelfScreen />);
-
-      fireEvent.press(screen.getByTestId('logout-button'));
-
-      expect(mockLogout).toHaveBeenCalled();
-    });
-  });
 });

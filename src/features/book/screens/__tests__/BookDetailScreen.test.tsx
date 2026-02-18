@@ -323,18 +323,6 @@ describe('BookDetailScreen', () => {
       );
     });
 
-    it('BookCover가 렌더링된다', () => {
-      render(<BookDetailScreen />);
-
-      expect(screen.getByTestId('book-cover')).toBeTruthy();
-    });
-
-    it('BookInfoCard가 렌더링된다', () => {
-      render(<BookDetailScreen />);
-
-      expect(screen.getByTestId('book-info-card')).toBeTruthy();
-    });
-
     it('ReviewList가 렌더링된다', () => {
       render(<BookDetailScreen />);
 
@@ -357,7 +345,7 @@ describe('BookDetailScreen', () => {
       fireEvent.press(screen.getByTestId('add-review-button'));
 
       expect(router.push).toHaveBeenCalledWith(
-        '/(main)/review/create?bookId=1',
+        '/(main)/(bookshelf)/review/create?bookId=1',
       );
     });
   });

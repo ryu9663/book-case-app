@@ -74,7 +74,7 @@ export function ReviewList({ bookId, onAddReview }: Props) {
             key={review.id}
             review={review}
             onEdit={() =>
-              router.push(`/(main)/review/${review.id}?bookId=${bookId}`)
+              router.push(`/(main)/(bookshelf)/review/${review.id}?bookId=${bookId}`)
             }
             onDelete={() => {
               setSelectedReview(review);

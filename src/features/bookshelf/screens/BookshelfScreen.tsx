@@ -18,7 +18,6 @@ import {
   getBookControllerFindAllQueryKey,
 } from '@/api/generated/books/books';
 import { useQueryClient } from '@tanstack/react-query';
-import { useAuth } from '@/features/auth/auth-context';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { ErrorScreen } from '@/components/ui/ErrorScreen';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
@@ -41,7 +40,6 @@ type GridItem = BookResponseDto | 'add';
 
 export function BookshelfScreen() {
   const insets = useSafeAreaInsets();
-  const { logout } = useAuth();
   const queryClient = useQueryClient();
   const { data: books, isLoading, error, refetch } = useBookControllerFindAll();
 
@@ -66,7 +64,7 @@ export function BookshelfScreen() {
   }, [books]);
 
   const handleBookPress = useCallback((book: BookResponseDto) => {
-    router.push(`/(main)/book/${book.id}`);
+    router.push(`/(main)/(bookshelf)/book/${book.id}`);
   }, []);
 
   const handleBookLongPress = useCallback((book: BookResponseDto) => {
@@ -90,7 +88,7 @@ export function BookshelfScreen() {
     }
   };
 
-  const goAddBook = () => router.push('/(main)/add-book');
+  const goAddBook = () => router.push('/(main)/(bookshelf)/add-book');
 
   if (isLoading) return <LoadingScreen />;
   if (error)
@@ -112,20 +110,6 @@ export function BookshelfScreen() {
         {/* Header */}
         <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
           <Text style={styles.headerTitle}>나의 서재</Text>
-          <Pressable
-            testID="logout-button"
-            onPress={logout}
-            style={({ pressed }) => [
-              styles.logoutButton,
-              pressed && { opacity: 0.7 },
-            ]}
-          >
-            <MaterialCommunityIcons
-              name="logout"
-              size={20}
-              color={colors.shelfBrown}
-            />
-          </Pressable>
         </View>
 
         {/* Content */}
@@ -272,12 +256,6 @@ const styles = StyleSheet.create({
     fontFamily: serifFont,
     color: colors.shelfBrown,
   },
-  logoutButton: {
-    padding: 10,
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    borderRadius: 12,
-  },
-
   // Scroll Content
   scroll: {
     flex: 1,

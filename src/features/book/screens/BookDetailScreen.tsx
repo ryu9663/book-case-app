@@ -126,7 +126,7 @@ export function BookDetailScreen() {
             <ReviewList
               bookId={bookId}
               onAddReview={() =>
-                router.push(`/(main)/review/create?bookId=${bookId}`)
+                router.push(`/(main)/(bookshelf)/review/create?bookId=${bookId}`)
               }
             />
           </View>

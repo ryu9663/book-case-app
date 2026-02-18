@@ -24,8 +24,8 @@ export function BookEditDialog({
 
   useEffect(() => {
     if (book) {
-      setTitle(book.title);
-      setAuthor(book.author);
+      setTitle(book.title ?? '');
+      setAuthor(book.author ?? '');
     }
   }, [book]);
 
