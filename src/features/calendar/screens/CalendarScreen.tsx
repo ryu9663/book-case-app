@@ -1,5 +1,7 @@
 import React, { useState, useCallback } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet } from 'react-native';
+import { Text } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { colors } from '@/lib/theme/colors';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
@@ -11,15 +13,41 @@ import { DayBookList } from '../components/DayBookList';
 
 LocaleConfig.locales['ko'] = {
   monthNames: [
-    '1월', '2월', '3월', '4월', '5월', '6월',
-    '7월', '8월', '9월', '10월', '11월', '12월',
+    '1월',
+    '2월',
+    '3월',
+    '4월',
+    '5월',
+    '6월',
+    '7월',
+    '8월',
+    '9월',
+    '10월',
+    '11월',
+    '12월',
   ],
   monthNamesShort: [
-    '1월', '2월', '3월', '4월', '5월', '6월',
-    '7월', '8월', '9월', '10월', '11월', '12월',
+    '1월',
+    '2월',
+    '3월',
+    '4월',
+    '5월',
+    '6월',
+    '7월',
+    '8월',
+    '9월',
+    '10월',
+    '11월',
+    '12월',
   ],
   dayNames: [
-    '일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일',
+    '일요일',
+    '월요일',
+    '화요일',
+    '수요일',
+    '목요일',
+    '금요일',
+    '토요일',
   ],
   dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
   today: '오늘',
@@ -27,6 +55,7 @@ LocaleConfig.locales['ko'] = {
 LocaleConfig.defaultLocale = 'ko';
 
 export function CalendarScreen() {
+  const insets = useSafeAreaInsets();
   const { dateToBookMap, isLoading, isError, isEmpty, refetch } =
     useCalendarData();
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -63,27 +92,34 @@ export function CalendarScreen() {
     : [];
 
   return (
-    <ScrollView style={styles.container}>
-      <Calendar
-        dayComponent={({ date, state }) => (
-          <CalendarDayCell
-            date={date!}
-            state={state ?? ''}
-            dateToBookMap={dateToBookMap}
-            onPress={handleDayPress}
-            isSelected={date?.dateString === selectedDate}
-          />
-        )}
-        theme={{
-          calendarBackground: colors.cream,
-          monthTextColor: colors.textPrimary,
-          arrowColor: colors.shelfBrown,
-          todayTextColor: colors.shelfBrown,
-          textSectionTitleColor: colors.textSecondary,
-        }}
-      />
-      <DayBookList selectedDate={selectedDate} books={selectedBooks} />
-    </ScrollView>
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+        <Text style={styles.headerTitle}>캘린더</Text>
+      </View>
+
+      <ScrollView style={styles.scroll}>
+        <Calendar
+          dayComponent={({ date, state }) => (
+            <CalendarDayCell
+              date={date!}
+              state={state ?? ''}
+              dateToBookMap={dateToBookMap}
+              onPress={handleDayPress}
+              isSelected={date?.dateString === selectedDate}
+            />
+          )}
+          theme={{
+            calendarBackground: colors.cream,
+            monthTextColor: colors.textPrimary,
+            arrowColor: colors.shelfBrown,
+            todayTextColor: colors.shelfBrown,
+            textSectionTitleColor: colors.textSecondary,
+          }}
+        />
+        <DayBookList selectedDate={selectedDate} books={selectedBooks} />
+      </ScrollView>
+    </View>
   );
 }
 
@@ -91,5 +127,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.cream,
+  },
+  header: {
+    paddingHorizontal: 24,
+    paddingBottom: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.3)',
+    zIndex: 20,
+  },
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: colors.shelfBrown,
+  },
+  scroll: {
+    flex: 1,
   },
 });
