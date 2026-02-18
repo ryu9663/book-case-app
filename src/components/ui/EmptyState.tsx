@@ -1,4 +1,4 @@
-import { View, StyleSheet, Platform } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import { colors } from '@/lib/theme/colors';
 
@@ -49,14 +49,14 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     textAlign: 'center',
     marginBottom: 8,
-    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
+
   },
   description: {
     fontSize: 16,
     color: colors.textMuted,
     textAlign: 'center',
     marginBottom: 24,
-    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
+
     lineHeight: 24,
   },
   button: {

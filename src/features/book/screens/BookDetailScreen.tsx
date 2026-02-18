@@ -3,7 +3,6 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  Platform,
   ImageBackground,
 } from 'react-native';
 import { Appbar, Snackbar } from 'react-native-paper';
@@ -180,11 +179,6 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: colors.shelfBrown,
-    fontFamily: Platform.select({
-      ios: 'Georgia',
-      android: 'serif',
-      default: 'serif',
-    }),
     fontWeight: '700',
     fontSize: 20,
   },

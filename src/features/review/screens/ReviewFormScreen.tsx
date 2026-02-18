@@ -298,11 +298,7 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     marginBottom: 24,
     textAlign: 'center',
-    fontFamily: Platform.select({
-      ios: 'Georgia',
-      android: 'serif',
-      default: 'serif',
-    }),
+
     borderBottomWidth: 1,
     borderBottomColor: colors.shelfHighlight,
     paddingBottom: 16,
@@ -311,11 +307,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     backgroundColor: 'transparent',
     fontSize: 16,
-    fontFamily: Platform.select({
-      ios: 'Georgia',
-      android: 'serif',
-      default: 'serif',
-    }),
+
     color: colors.textPrimary,
   },
   contentInput: {
@@ -329,11 +321,7 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     marginTop: 12,
     marginBottom: 8,
-    fontFamily: Platform.select({
-      ios: 'Georgia',
-      android: 'serif',
-      default: 'serif',
-    }),
+
   },
   dateButton: {
     borderBottomWidth: 1,
@@ -344,11 +332,7 @@ const styles = StyleSheet.create({
   dateButtonText: {
     fontSize: 16,
     color: colors.textPrimary,
-    fontFamily: Platform.select({
-      ios: 'Georgia',
-      android: 'serif',
-      default: 'serif',
-    }),
+
   },
   pageRow: {
     flexDirection: 'row',
@@ -374,10 +358,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: colors.warmWhite,
-    fontFamily: Platform.select({
-      ios: 'Georgia',
-      android: 'serif',
-      default: 'serif',
-    }),
+
   },
 });

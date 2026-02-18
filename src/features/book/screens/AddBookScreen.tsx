@@ -283,22 +283,14 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.textPrimary,
     marginBottom: 8,
-    fontFamily: Platform.select({
-      ios: 'Georgia',
-      android: 'serif',
-      default: 'serif',
-    }),
+
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 14,
     color: colors.textMuted,
     marginBottom: 24,
-    fontFamily: Platform.select({
-      ios: 'Georgia',
-      android: 'serif',
-      default: 'serif',
-    }),
+
     textAlign: 'center',
   },
   searchRow: {
@@ -310,11 +302,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'transparent',
     fontSize: 16,
-    fontFamily: Platform.select({
-      ios: 'Georgia',
-      android: 'serif',
-      default: 'serif',
-    }),
+
     color: colors.textPrimary,
   },
   searchButton: {
@@ -332,11 +320,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginTop: 12,
     textAlign: 'center',
-    fontFamily: Platform.select({
-      ios: 'Georgia',
-      android: 'serif',
-      default: 'serif',
-    }),
+
   },
   listContent: {
     padding: 16,
@@ -375,31 +359,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: colors.textPrimary,
-    fontFamily: Platform.select({
-      ios: 'Georgia',
-      android: 'serif',
-      default: 'serif',
-    }),
+
   },
   resultAuthor: {
     fontSize: 13,
     color: colors.textSecondary,
     marginTop: 4,
-    fontFamily: Platform.select({
-      ios: 'Georgia',
-      android: 'serif',
-      default: 'serif',
-    }),
+
   },
   resultPublisher: {
     fontSize: 12,
     color: colors.textMuted,
     marginTop: 2,
-    fontFamily: Platform.select({
-      ios: 'Georgia',
-      android: 'serif',
-      default: 'serif',
-    }),
+
   },
   centerContent: {
     flex: 1,
@@ -409,11 +381,7 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     color: colors.warmWhite,
-    fontFamily: Platform.select({
-      ios: 'Georgia',
-      android: 'serif',
-      default: 'serif',
-    }),
+
   },
   manualButton: {
     marginTop: 16,
@@ -421,11 +389,7 @@ const styles = StyleSheet.create({
   },
   manualButtonLabel: {
     color: colors.warmWhite,
-    fontFamily: Platform.select({
-      ios: 'Georgia',
-      android: 'serif',
-      default: 'serif',
-    }),
+
   },
   manualForm: {
     backgroundColor: colors.paper,
@@ -440,21 +404,13 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.textPrimary,
     marginBottom: 16,
-    fontFamily: Platform.select({
-      ios: 'Georgia',
-      android: 'serif',
-      default: 'serif',
-    }),
+
     textAlign: 'center',
   },
   manualInput: {
     marginBottom: 12,
     backgroundColor: 'transparent',
-    fontFamily: Platform.select({
-      ios: 'Georgia',
-      android: 'serif',
-      default: 'serif',
-    }),
+
   },
   manualSubmitButton: {
     marginTop: 8,
@@ -472,10 +428,6 @@ const styles = StyleSheet.create({
     color: colors.paper,
     marginTop: 12,
     fontSize: 16,
-    fontFamily: Platform.select({
-      ios: 'Georgia',
-      android: 'serif',
-      default: 'serif',
-    }),
+
   },
 });

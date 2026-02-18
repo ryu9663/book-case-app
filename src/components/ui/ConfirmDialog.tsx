@@ -1,5 +1,5 @@
 import { Dialog, Portal, Button, Text } from 'react-native-paper';
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { colors } from '@/lib/theme/colors';
 
 interface Props {
@@ -43,12 +43,12 @@ const styles = StyleSheet.create({
     borderColor: '#D7CCC8',
   },
   title: {
-    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
+
     color: colors.textPrimary,
     fontWeight: '700',
   },
   content: {
-    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
+
     color: colors.textSecondary,
     fontSize: 16,
   },

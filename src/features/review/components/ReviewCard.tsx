@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react';
 import {
   StyleSheet,
-  Platform,
   View,
   Pressable,
   LayoutAnimation,
@@ -103,12 +102,6 @@ export function ReviewCard({ review, onEdit, onDelete }: Props) {
   );
 }
 
-const serifFont = Platform.select({
-  ios: 'Georgia',
-  android: 'serif',
-  default: 'serif',
-});
-
 const styles = StyleSheet.create({
   card: {
     marginBottom: 16,
@@ -127,19 +120,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: colors.textPrimary,
-    fontFamily: serifFont,
+
   },
   content: {
     fontSize: 14,
     color: colors.textSecondary,
     lineHeight: 22,
-    fontFamily: serifFont,
+
     marginTop: 4,
   },
   firstLetter: {
     fontSize: 28,
     lineHeight: 34,
-    fontFamily: serifFont,
+
     color: colors.textPrimary,
   },
   actions: {
@@ -157,7 +150,7 @@ const styles = StyleSheet.create({
   metaText: {
     fontSize: 12,
     color: colors.textMuted,
-    fontFamily: serifFont,
+
   },
   toggleButton: {
     alignSelf: 'flex-end' as const,
@@ -167,7 +160,7 @@ const styles = StyleSheet.create({
   toggleText: {
     fontSize: 13,
     color: colors.textMuted,
-    fontFamily: serifFont,
+
     textDecorationLine: 'underline' as const,
   },
 });

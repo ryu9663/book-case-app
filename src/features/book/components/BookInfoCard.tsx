@@ -1,4 +1,4 @@
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Text, Card } from 'react-native-paper';
 import { colors } from '@/lib/theme/colors';
 import type { BookResponseDto } from '@/api/generated/models';
@@ -47,11 +47,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.textMuted, // Faded ink
     marginTop: 12,
-    fontFamily: Platform.select({
-      ios: 'Georgia',
-      android: 'serif',
-      default: 'serif',
-    }),
+
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 1,
@@ -61,10 +57,6 @@ const styles = StyleSheet.create({
     color: colors.textPrimary, // Dark ink
     fontWeight: '500',
     marginTop: 4,
-    fontFamily: Platform.select({
-      ios: 'Georgia',
-      android: 'serif',
-      default: 'serif',
-    }),
+
   },
 });

@@ -1,16 +1,8 @@
-import { Platform } from 'react-native';
-import { MD3LightTheme, configureFonts } from 'react-native-paper';
+import { MD3LightTheme } from 'react-native-paper';
 import { colors } from './colors';
-
-const fontFamily = Platform.OS === 'ios' ? 'Georgia' : 'serif';
-
-const fontConfig = {
-  fontFamily,
-};
 
 export const theme = {
   ...MD3LightTheme,
-  fonts: configureFonts({ config: fontConfig }),
   colors: {
     ...MD3LightTheme.colors,
     primary: colors.shelfBrown,

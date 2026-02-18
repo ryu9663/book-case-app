@@ -1,4 +1,4 @@
-import { Pressable, View, StyleSheet, Platform, Image } from 'react-native';
+import { Pressable, View, StyleSheet, Image } from 'react-native';
 import { Text } from 'react-native-paper';
 import { getSpineColor } from '@/lib/theme/colors';
 import type { BookResponseDto } from '@/api/generated/models';
@@ -52,12 +52,6 @@ export function BookCover({ book, onPress, onLongPress }: Props) {
   );
 }
 
-const serifFont = Platform.select({
-  ios: 'Georgia',
-  android: 'serif',
-  default: 'serif',
-});
-
 const styles = StyleSheet.create({
   container: {
     width: '100%',
@@ -109,7 +103,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: 'rgba(255,255,255,0.95)',
     textAlign: 'center',
-    fontFamily: serifFont,
+
     textTransform: 'uppercase',
     letterSpacing: -0.5,
     lineHeight: 15,
@@ -126,7 +120,7 @@ const styles = StyleSheet.create({
   author: {
     fontSize: 8,
     color: 'rgba(255,255,255,0.7)',
-    fontFamily: serifFont,
+
     fontStyle: 'italic',
     textAlign: 'center',
   },

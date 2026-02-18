@@ -1,4 +1,4 @@
-import { View, StyleSheet, Platform, Image } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import { Text } from 'react-native-paper';
 import { getSpineColor } from '@/lib/theme/colors';
 
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     textAlign: 'center',
     lineHeight: 26,
-    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
+
     textShadowColor: 'rgba(0,0,0,0.5)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   author: {
     color: 'rgba(255,255,255,0.9)',
     fontSize: 14,
-    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
+
     textAlign: 'center',
     fontStyle: 'italic',
   },

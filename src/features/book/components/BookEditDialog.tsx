@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Dialog, Portal, TextInput, Button } from 'react-native-paper';
 import { colors } from '@/lib/theme/colors';
 import type { BookResponseDto } from '@/api/generated/models';
@@ -79,13 +79,13 @@ const styles = StyleSheet.create({
     borderColor: '#D7CCC8',
   },
   title: {
-    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
+
     color: colors.textPrimary,
     fontWeight: '700',
   },
   input: {
     marginBottom: 12,
     backgroundColor: 'transparent',
-    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' }),
+
   },
 });

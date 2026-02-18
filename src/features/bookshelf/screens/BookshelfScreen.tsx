@@ -4,7 +4,6 @@ import {
   ScrollView,
   RefreshControl,
   StyleSheet,
-  Platform,
   Pressable,
   ImageBackground,
 } from 'react-native';
@@ -212,12 +211,6 @@ export function BookshelfScreen() {
   );
 }
 
-const serifFont = Platform.select({
-  ios: 'Georgia',
-  android: 'serif',
-  default: 'serif',
-});
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -253,7 +246,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: '700',
-    fontFamily: serifFont,
     color: colors.shelfBrown,
   },
   // Scroll Content
@@ -330,7 +322,6 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: 10,
     color: 'rgba(255,255,255,0.7)',
-    fontFamily: serifFont,
     fontStyle: 'italic',
   },
 });
