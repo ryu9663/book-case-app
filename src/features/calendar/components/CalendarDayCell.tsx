@@ -20,7 +20,13 @@ interface CalendarDayCellProps {
   isSelected?: boolean;
 }
 
-const MAX_THUMBNAILS = 4;
+const MAX_THUMBNAILS = 7;
+
+function getColumns(bookCount: number): number {
+  if (bookCount <= 1) return 1;
+  if (bookCount <= 4) return 2;
+  return 3;
+}
 
 export function CalendarDayCell({
   date,
@@ -39,6 +45,12 @@ export function CalendarDayCell({
   const overflow = uniqueBooks.length - MAX_THUMBNAILS;
   const isToday = state === 'today';
   const isDisabled = state === 'disabled';
+
+  const cols = getColumns(visibleBooks.length);
+  const rows: (typeof visibleBooks)[] = [];
+  for (let i = 0; i < visibleBooks.length; i += cols) {
+    rows.push(visibleBooks.slice(i, i + cols));
+  }
 
   const testID = isSelected
     ? 'calendar-day-cell-selected'
@@ -67,12 +79,16 @@ export function CalendarDayCell({
       </Text>
       {visibleBooks.length > 0 && (
         <View style={styles.thumbnailGrid}>
-          {visibleBooks.map((book) => (
-            <CalendarThumbnail
-              key={book.bookId}
-              title={book.title}
-              thumbnail={book.thumbnail}
-            />
+          {rows.map((row, rowIndex) => (
+            <View key={rowIndex} style={styles.thumbnailRow}>
+              {row.map((book) => (
+                <CalendarThumbnail
+                  key={book.bookId}
+                  title={book.title}
+                  thumbnail={book.thumbnail}
+                />
+              ))}
+            </View>
           ))}
           {overflow > 0 && (
             <Text style={styles.overflowText}>+{overflow}</Text>
@@ -88,17 +104,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     width: 48,
-    minHeight: 56,
+    height: 72,
     paddingVertical: 2,
+    paddingHorizontal: 2,
+    borderWidth: 1.5,
+    borderColor: 'transparent',
+    borderRadius: 8,
   },
   todayContainer: {
     backgroundColor: 'rgba(93, 64, 55, 0.1)',
-    borderRadius: 8,
   },
   selectedContainer: {
     borderColor: colors.shelfBrown,
-    borderWidth: 1.5,
-    borderRadius: 8,
     backgroundColor: 'rgba(93, 64, 55, 0.06)',
   },
   dayText: {
@@ -114,15 +131,19 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
   },
   thumbnailGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
+    flex: 1,
+    width: '100%',
     gap: 1,
-    maxWidth: 36,
+  },
+  thumbnailRow: {
+    flexDirection: 'row',
+    flex: 1,
+    gap: 1,
   },
   overflowText: {
     fontSize: 8,
     color: colors.textMuted,
     lineHeight: 12,
+    textAlign: 'center',
   },
 });

@@ -88,8 +88,8 @@ describe('CalendarDayCell', () => {
     expect(getByTestId('thumb-책2')).toBeTruthy();
   });
 
-  it('4개 초과 시 최대 4개 + "+N" 텍스트 표시', () => {
-    const books = Array.from({ length: 6 }, (_, i) => ({
+  it('7개 초과 시 최대 7개 + "+N" 텍스트 표시', () => {
+    const books = Array.from({ length: 9 }, (_, i) => ({
       bookId: i + 1,
       title: `책${i + 1}`,
       author: `저자${i + 1}`,
@@ -113,10 +113,10 @@ describe('CalendarDayCell', () => {
       />,
     );
 
-    // 4개만 렌더링
+    // 7개만 렌더링
     expect(queryByTestId('thumb-책1')).toBeTruthy();
-    expect(queryByTestId('thumb-책4')).toBeTruthy();
-    expect(queryByTestId('thumb-책5')).toBeNull();
+    expect(queryByTestId('thumb-책7')).toBeTruthy();
+    expect(queryByTestId('thumb-책8')).toBeNull();
 
     // +2 표시
     expect(getByText('+2')).toBeTruthy();

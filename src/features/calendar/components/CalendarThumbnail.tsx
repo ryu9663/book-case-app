@@ -1,14 +1,11 @@
 import React from 'react';
-import { Image, View, StyleSheet } from 'react-native';
+import { Image, View } from 'react-native';
 import { getSpineColor } from '@/lib/theme/colors';
 
 interface CalendarThumbnailProps {
   title: string;
   thumbnail: string | null | undefined;
 }
-
-const THUMB_WIDTH = 14;
-const THUMB_HEIGHT = 20;
 
 export function CalendarThumbnail({ title, thumbnail }: CalendarThumbnailProps) {
   if (thumbnail) {
@@ -17,6 +14,7 @@ export function CalendarThumbnail({ title, thumbnail }: CalendarThumbnailProps) 
         testID="calendar-thumbnail-image"
         source={{ uri: thumbnail }}
         style={styles.thumbnail}
+        resizeMode="cover"
       />
     );
   }
@@ -29,10 +27,9 @@ export function CalendarThumbnail({ title, thumbnail }: CalendarThumbnailProps) 
   );
 }
 
-const styles = StyleSheet.create({
+const styles = {
   thumbnail: {
-    width: THUMB_WIDTH,
-    height: THUMB_HEIGHT,
+    flex: 1,
     borderRadius: 2,
   },
-});
+} as const;
