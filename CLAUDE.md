@@ -1,23 +1,49 @@
 # Book Case App
 
-- [유저 플로우 & 라우팅 구조](docs/user-flows.md)
+독서 기록 앱 (React Native/Expo + NestJS)
+
+## 문서
+
+- [유저 플로우 & 라우팅](docs/user-flows.md)
 
 ## 역할
 
-- 당신은 react native 시니어개발자이다.
-- Suspense의 로딩 상태와 ErrorBoundary의 예외 상황을 분리해 관리하고, 에러 발생 시 안전한 fallback UI로 전환한 뒤 재시도/복구 동작까지 제공한다.
+- React Native 시니어 개발자로 동작한다.
 - TDD를 한다.
+- 에러 발생 시 ErrorBoundary fallback UI + 재시도를 제공한다.
+
+## 프로젝트 구조
+
+```
+src/
+├── app/                  # Expo Router (파일 기반 라우팅)
+│   ├── _layout.tsx       # Root: QueryClient, PaperProvider, AuthGate
+│   ├── (auth)/           # 로그인/회원가입
+│   └── (main)/           # 탭: bookshelf, calendar, settings
+├── features/             # 도메인별 코드
+│   ├── auth/             # 수동 API + AuthContext + JWT 디코딩
+│   ├── book/             # 책 상세, 추가
+│   ├── bookshelf/        # 책장 그리드
+│   ├── calendar/         # 독서 캘린더 (hooks, utils, types 분리)
+│   └── review/           # 독후감 CRUD
+├── api/generated/        # Orval 자동 생성 (직접 수정 금지)
+├── components/ui/        # 공통 UI (LoadingScreen, ErrorScreen, EmptyState, ConfirmDialog)
+└── lib/
+    ├── api/mutator.ts    # Axios 인스턴스 + 401 interceptor + refresh rotation
+    ├── theme/            # MD3 테마, 색상 시스템
+    └── utils/storage.ts  # AsyncStorage 래퍼 (토큰, 유저)
+```
 
 ## API 코드 생성 (Orval)
 
-- `npm run api:generate` → `src/api/generated/` 자동 생성 (직접 수정 금지)
-- Auth 엔드포인트는 OpenAPI 스펙에 응답 타입이 void → `src/features/auth/api.ts`에서 수동 관리
-- `src/lib/api/mutator.ts`: 모든 생성 코드가 사용하는 axios 인스턴스, 401 interceptor + refresh token rotation 포함
+- `npm run api:generate` → `src/api/generated/` 자동 생성 (직접 수정 금지, .gitignore 포함)
+- `orval.config.ts`: tags-split 모드, react-query 클라이언트
+- **Auth는 수동 관리** (`src/features/auth/api.ts`): OpenAPI 스펙이 auth 응답을 void로 정의하여 생성 코드 사용 불가
+- `src/lib/api/mutator.ts`: 모든 API 요청의 axios 인스턴스. 401 시 refresh token rotation + shared promise로 중복 갱신 방지
 
-## 프로젝트 규칙
+## 규칙
 
-- 명령형 refetch 금지: `setTimeout` + `refetch()` 대신 `enabled` 조건으로 선언적 제어
-- react-native-paper TextInput 테스트 시 `testID` 사용 필수 (label이 여러 번 렌더링됨)
-- jest@^29 고정 (jest 30은 jest-expo와 호환 안 됨)
-- Expo peer dep 충돌 시 `npm install --legacy-peer-deps`
-- 커밋 메시지: 한국어, 기능별 분리
+- **선언적 쿼리**: `setTimeout` + `refetch()` 금지 → `enabled` 조건으로 제어
+- **테스트**: react-native-paper TextInput은 `testID` 필수 (label 중복 렌더링). jest@^29 고정 (jest 30은 jest-expo 호환 불가)
+- **의존성**: Expo peer dep 충돌 시 `npm install --legacy-peer-deps`
+- **커밋**: 한국어, 기능별 분리

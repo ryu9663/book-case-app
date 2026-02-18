@@ -16,8 +16,8 @@
     │   └── review/
     │       ├── create.tsx → ReviewFormScreen (생성)
     │       └── [id].tsx → ReviewFormScreen (수정)
-    ├── calendar/                    ← 탭 2: 캘린더
-    │   └── index.tsx → CalendarScreen (준비 중)
+    ├── calendar/                    ← 탭 2: 독서 캘린더
+    │   └── index.tsx → CalendarScreen
     └── settings/                    ← 탭 3: 설정
         └── index.tsx → SettingsScreen (로그아웃)
 ```
@@ -34,7 +34,7 @@
 ```
 [하단 탭 바]
 ├── 나의 서재 (bookshelf) 탭
-│   └── BookshelfScreen (책장)
+│   └── BookshelfScreen (책장 그리드)
 │       ├── 책 클릭 → BookDetailScreen
 │       │   ├── 수정: BookEditDialog → PATCH /books/{id}
 │       │   ├── 삭제: ConfirmDialog → DELETE /books/{id} → router.back()
@@ -46,7 +46,10 @@
 │           ├── 검색: GET /books/search?title=...
 │           ├── 결과 선택 or 직접 입력 → POST /books → router.back()
 │           └── 검색 결과 없으면 수동 입력 모드
-├── 캘린더 탭 → (준비 중)
+├── 캘린더 탭 → CalendarScreen
+│   ├── 월별 캘린더 (react-native-calendars)
+│   ├── 날짜 셀에 해당일 읽은 책 썸네일 표시
+│   └── 날짜 선택 → DayBookList (인라인 책 목록 + 독후감 정보)
 └── 설정 탭 → SettingsScreen
     ├── 사용자 이메일 표시
     └── 로그아웃 → storage.clear() → /(auth)/login
