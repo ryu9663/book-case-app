@@ -99,114 +99,106 @@ export function BookshelfScreen() {
 
   return (
     <View style={styles.container}>
-      <ImageBackground
-        source={require('@assets/book-shelf/background.webp')}
-        style={styles.backgroundImage}
-        resizeMode="cover"
+      <View style={styles.whiteOverlay} />
+
+      {/* Header */}
+      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+        <Text style={styles.headerTitle}>나의 서재</Text>
+      </View>
+
+      {/* Content */}
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl refreshing={false} onRefresh={refetch} />
+        }
       >
-        <View style={styles.whiteOverlay} />
-
-        {/* Header */}
-        <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-          <Text style={styles.headerTitle}>나의 서재</Text>
-        </View>
-
-        {/* Content */}
-        <ScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.scrollContent}
-          refreshControl={
-            <RefreshControl refreshing={false} onRefresh={refetch} />
-          }
-        >
-          <View>
-            {rows.map((row, rowIdx) => (
-              <View key={rowIdx} style={styles.rowWrapper}>
-                {/* Book Row */}
-                <View style={styles.row}>
-                  {row.map((item, colIdx) => {
-                    if (item === null) {
-                      return (
-                        <View
-                          key={`empty-${rowIdx}-${colIdx}`}
-                          style={styles.gridItem}
-                        />
-                      );
-                    }
-                    if (item === 'add') {
-                      return (
-                        <View key="add" style={styles.gridItem}>
-                          <Pressable
-                            testID="add-book-button"
-                            onPress={goAddBook}
-                            style={({ pressed }) => [
-                              styles.addButton,
-                              pressed && {
-                                backgroundColor: 'rgba(255,255,255,0.05)',
-                              },
-                            ]}
-                          >
-                            <MaterialCommunityIcons
-                              name="plus"
-                              size={24}
-                              color="rgba(255,255,255,0.6)"
-                            />
-                          </Pressable>
-                        </View>
-                      );
-                    }
+        <View>
+          {rows.map((row, rowIdx) => (
+            <View key={rowIdx} style={styles.rowWrapper}>
+              {/* Book Row */}
+              <View style={styles.row}>
+                {row.map((item, colIdx) => {
+                  if (item === null) {
                     return (
-                      <View key={item.id} style={styles.gridItem}>
-                        <BookCover
-                          book={item}
-                          onPress={() => handleBookPress(item)}
-                          onLongPress={() => handleBookLongPress(item)}
-                        />
+                      <View
+                        key={`empty-${rowIdx}-${colIdx}`}
+                        style={styles.gridItem}
+                      />
+                    );
+                  }
+                  if (item === 'add') {
+                    return (
+                      <View key="add" style={styles.gridItem}>
+                        <Pressable
+                          testID="add-book-button"
+                          onPress={goAddBook}
+                          style={({ pressed }) => [
+                            styles.addButton,
+                            pressed && {
+                              backgroundColor: 'rgba(255,255,255,0.05)',
+                            },
+                          ]}
+                        >
+                          <MaterialCommunityIcons
+                            name="plus"
+                            size={24}
+                            color="rgba(255,255,255,0.6)"
+                          />
+                        </Pressable>
                       </View>
                     );
-                  })}
-                  {/* Fill remaining slots if row is short */}
-                  {row.length < BOOKS_PER_ROW &&
-                    Array.from({ length: BOOKS_PER_ROW - row.length }).map(
-                      (_, i) => (
-                        <View key={`pad-${i}`} style={styles.gridItem} />
-                      ),
-                    )}
-                </View>
-
-                {/* Shelf Plank */}
-                <View style={styles.shelfPlank}>
-                  <View style={styles.shelfTop} />
-                  <View style={styles.shelfSide} />
-                </View>
+                  }
+                  return (
+                    <View key={item.id} style={styles.gridItem}>
+                      <BookCover
+                        book={item}
+                        onPress={() => handleBookPress(item)}
+                        onLongPress={() => handleBookLongPress(item)}
+                      />
+                    </View>
+                  );
+                })}
+                {/* Fill remaining slots if row is short */}
+                {row.length < BOOKS_PER_ROW &&
+                  Array.from({ length: BOOKS_PER_ROW - row.length }).map(
+                    (_, i) => <View key={`pad-${i}`} style={styles.gridItem} />,
+                  )}
               </View>
-            ))}
-          </View>
-        </ScrollView>
 
-        {/* Footer */}
-        <View style={[styles.footer, { paddingBottom: insets.bottom + 12 }]}>
-          <Text style={styles.footerText}>{bookCount}권의 수집된 이야기</Text>
-          <Text style={styles.footerText}>Established 2026</Text>
+              {/* Shelf Plank */}
+              <View style={styles.shelfPlank}>
+                <View style={styles.shelfTop} />
+                <View style={styles.shelfSide} />
+              </View>
+            </View>
+          ))}
         </View>
+      </ScrollView>
 
-        <ConfirmDialog
-          visible={deleteDialogVisible}
-          title="책 삭제"
-          message={`"${selectedBook?.title ?? ''}"을(를) 삭제하시겠습니까?`}
-          confirmLabel="삭제"
-          onConfirm={handleDelete}
-          onDismiss={() => setDeleteDialogVisible(false)}
-        />
+      {/* Footer */}
+      <View style={[styles.footer, { paddingBottom: insets.bottom + 12 }]}>
+        <Text style={styles.footerText}>{bookCount}권의 수집된 이야기</Text>
+        <Text style={styles.footerText}>Established 2026</Text>
+      </View>
 
-        <Snackbar
-          visible={!!snackbar}
-          onDismiss={() => setSnackbar('')}
-          duration={2000}
-        >
-          {snackbar}
-        </Snackbar>
-      </ImageBackground>
+      <ConfirmDialog
+        visible={deleteDialogVisible}
+        title="책 삭제"
+        message={`"${selectedBook?.title ?? ''}"을(를) 삭제하시겠습니까?`}
+        confirmLabel="삭제"
+        onConfirm={handleDelete}
+        onDismiss={() => setDeleteDialogVisible(false)}
+      />
+
+      <Snackbar
+        visible={!!snackbar}
+        onDismiss={() => setSnackbar('')}
+        duration={2000}
+      >
+        {snackbar}
+      </Snackbar>
     </View>
   );
 }
