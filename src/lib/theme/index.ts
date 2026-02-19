@@ -3,7 +3,8 @@ import { colors } from './colors';
 
 const fontConfig = {
   fontFamily: 'GowunDodum_400Regular',
-} as const;
+  fontWeight: '400' as const,
+};
 
 export const theme = {
   ...MD3LightTheme,
