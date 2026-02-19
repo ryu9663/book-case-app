@@ -41,7 +41,6 @@ export const styles = StyleSheet.create({
   },
   subTitle: {
     fontSize: 14,
-    paddingLeft: 6,
   },
   rowWrapper: {
     marginBottom: 32,

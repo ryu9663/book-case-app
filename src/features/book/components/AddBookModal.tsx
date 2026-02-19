@@ -112,8 +112,10 @@ export function AddBookModal({
   };
 
   const handleManualSubmit = async () => {
-    if (!manualTitleRef.current.trim() || !manualAuthorRef.current.trim())
+    if (!manualTitleRef.current.trim() || !manualAuthorRef.current.trim()) {
+      setError('제목과 저자를 모두 입력해주세요.');
       return;
+    }
     try {
       await createBook.mutateAsync({
         data: {
@@ -289,6 +291,11 @@ export function AddBookModal({
                       outlineColor={colors.accentGreen}
                       activeOutlineColor={colors.accentGreen}
                       style={styles.manualInput}
+                      theme={{
+                        colors: {
+                          onSurfaceVariant: colors.shelfHighlight,
+                        },
+                      }}
                     />
                     <TextInput
                       testID="manual-publisher"
@@ -300,6 +307,11 @@ export function AddBookModal({
                       outlineColor={colors.accentGreen}
                       activeOutlineColor={colors.accentGreen}
                       style={styles.manualInput}
+                      theme={{
+                        colors: {
+                          onSurfaceVariant: colors.shelfHighlight,
+                        },
+                      }}
                     />
                     <Button
                       mode="contained"
