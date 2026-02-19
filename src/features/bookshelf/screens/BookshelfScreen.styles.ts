@@ -71,22 +71,18 @@ export const styles = StyleSheet.create({
   },
   shelfTop: {
     height: 8,
-    backgroundColor: colors.shelfPlank,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: 'rgb(226,235,213)',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.5,
     shadowRadius: 8,
     elevation: 6,
   },
   shelfSide: {
-    height: 6,
-    backgroundColor: colors.shelfPlankSide,
+    height: 2,
+    backgroundColor: 'rgb(204,215,190)',
     borderBottomLeftRadius: 2,
     borderBottomRightRadius: 2,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: 'rgba(0,0,0,0.1)',
   },
 
   // Footer

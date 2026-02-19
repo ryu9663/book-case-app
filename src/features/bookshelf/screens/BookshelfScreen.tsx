@@ -10,6 +10,7 @@ import {
 import { Text, Snackbar } from 'react-native-paper';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { AddBookModal } from '@/features/book/components/AddBookModal';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   useBookControllerFindAll,
@@ -53,6 +54,7 @@ export function BookshelfScreen() {
     null,
   );
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+  const [addBookVisible, setAddBookVisible] = useState(false);
   const [snackbar, setSnackbar] = useState('');
 
   const booksPerRow = useMemo(() => {
@@ -97,7 +99,11 @@ export function BookshelfScreen() {
     }
   };
 
-  const goAddBook = () => router.push('/(main)/(bookshelf)/add-book');
+  const goAddBook = () => setAddBookVisible(true);
+
+  const handleAddBookSuccess = (message: string) => {
+    setSnackbar(message);
+  };
 
   if (isLoading) return <LoadingScreen />;
   if (error)
@@ -184,6 +190,12 @@ export function BookshelfScreen() {
           ))}
         </View>
       </ScrollView>
+
+      <AddBookModal
+        visible={addBookVisible}
+        onDismiss={() => setAddBookVisible(false)}
+        onSuccess={handleAddBookSuccess}
+      />
 
       <ConfirmDialog
         visible={deleteDialogVisible}

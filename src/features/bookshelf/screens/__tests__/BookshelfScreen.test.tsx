@@ -117,6 +117,24 @@ jest.mock('@/components/ui/ErrorScreen', () => ({
   },
 }));
 
+// AddBookModal mock
+let capturedAddBookProps: any = {};
+jest.mock('@/features/book/components/AddBookModal', () => ({
+  AddBookModal: (props: any) => {
+    capturedAddBookProps = props;
+    if (!props.visible) return null;
+    const { View, Text, Pressable } = require('react-native');
+    return (
+      <View testID="add-book-modal">
+        <Text>새 책 등록</Text>
+        <Pressable testID="dismiss-modal" onPress={props.onDismiss}>
+          <Text>취소</Text>
+        </Pressable>
+      </View>
+    );
+  },
+}));
+
 jest.mock('../../components/BookCover', () => ({
   BookCover: ({ book, onPress, onLongPress }: any) => {
     const { Pressable, Text } = require('react-native');
@@ -146,6 +164,7 @@ const { router } = require('expo-router');
 
 beforeEach(() => {
   jest.clearAllMocks();
+  capturedAddBookProps = {};
   mockFindAllReturn = {
     data: mockBooks,
     isLoading: false,
@@ -237,12 +256,15 @@ describe('BookshelfScreen', () => {
   // ===== Create (추가) =====
 
   describe('책 추가', () => {
-    it('+ 버튼을 누르면 add-book 페이지로 이동한다', () => {
+    it('+ 버튼을 누르면 AddBookModal이 표시된다', () => {
       render(<BookshelfScreen />);
+
+      // 모달이 초기에는 표시되지 않음
+      expect(screen.queryByTestId('add-book-modal')).toBeNull();
 
       fireEvent.press(screen.getByTestId('add-book-button'));
 
-      expect(router.push).toHaveBeenCalledWith('/(main)/(bookshelf)/add-book');
+      expect(screen.getByTestId('add-book-modal')).toBeTruthy();
     });
   });
 
