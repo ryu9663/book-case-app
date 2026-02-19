@@ -1,8 +1,13 @@
-import { MD3LightTheme } from 'react-native-paper';
+import { MD3LightTheme, configureFonts } from 'react-native-paper';
 import { colors } from './colors';
+
+const fontConfig = {
+  fontFamily: 'GowunDodum_400Regular',
+} as const;
 
 export const theme = {
   ...MD3LightTheme,
+  fonts: configureFonts({ config: fontConfig }),
   colors: {
     ...MD3LightTheme.colors,
     primary: colors.shelfBrown,

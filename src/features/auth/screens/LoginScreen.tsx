@@ -5,7 +5,7 @@ import {
   Platform,
   TouchableOpacity,
   Alert,
-  ImageBackground,
+  Image,
 } from 'react-native';
 import { Button, Text, TextInput } from 'react-native-paper';
 import { useState } from 'react';
@@ -51,74 +51,73 @@ export function LoginScreen() {
 
   return (
     <View style={styles.container}>
-      <ImageBackground
-        source={require('@assets/login/background.webp')}
-        style={styles.backgroundImage}
-        resizeMode="cover"
+      <KeyboardAvoidingView
+        style={styles.keyboardView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View style={styles.whiteOverlay} />
+        <View style={styles.contentContainer}>
+          <Image
+            source={require('@assets/login/login-image.webp')}
+            style={styles.loginImage}
+            resizeMode="contain"
+          />
 
-        <KeyboardAvoidingView
-          style={styles.keyboardView}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        >
-          <View style={styles.contentContainer}>
-            <View style={styles.header}>
-              <Text style={styles.title}>나의 작은 서재</Text>
-              <Text style={styles.subtitle}>
-                오직 나만을 위한 평온한 기록의 공간
-              </Text>
-            </View>
-
-            <View style={styles.formContainer}>
-              <TextInput
-                {...inputProps}
-                testID="email-input"
-                label="이메일"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-
-              <TextInput
-                {...inputProps}
-                testID="password-input"
-                label="비밀번호"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-              />
-
-              <Button
-                mode="contained"
-                onPress={handleLogin}
-                loading={isPending}
-                disabled={isPending}
-                style={styles.loginButton}
-                labelStyle={styles.loginButtonLabel}
-                contentStyle={styles.loginButtonContent}
-              >
-                서재 들어가기
-              </Button>
-            </View>
-
-            <TouchableOpacity
-              onPress={() => router.push('/(auth)/register')}
-              style={styles.footer}
-              accessibilityRole="link"
-            >
-              <Text style={styles.footerText}>
-                새로운 이야기를 시작할까요?{' '}
-                <Text style={styles.signupText}>회원가입</Text>
-              </Text>
-            </TouchableOpacity>
-            <Text style={styles.caption}>
-              "서재는 정신의 정원이며, 책은 그 속에서 피어나는 영원한 꽃이다"
+          <View style={styles.header}>
+            <Text style={styles.title}>나의 작은 서재</Text>
+            <Text style={styles.subtitle}>
+              오직 나만을 위한 평온한 기록의 공간
             </Text>
           </View>
-        </KeyboardAvoidingView>
-      </ImageBackground>
+
+          <View style={styles.formContainer}>
+            <TextInput
+              {...inputProps}
+              testID="email-input"
+              label="이메일"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+
+            <TextInput
+              {...inputProps}
+              testID="password-input"
+              label="비밀번호"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
+
+            <Button
+              mode="contained"
+              onPress={handleLogin}
+              loading={isPending}
+              disabled={isPending}
+              style={styles.loginButton}
+              labelStyle={styles.loginButtonLabel}
+              contentStyle={styles.loginButtonContent}
+            >
+              서재 들어가기
+            </Button>
+          </View>
+
+          <TouchableOpacity
+            onPress={() => router.push('/(auth)/register')}
+            style={styles.footer}
+            accessibilityRole="link"
+          >
+            <Text style={styles.footerText}>
+              새로운 이야기를 시작할까요?{' '}
+              <Text style={styles.signupText}>회원가입</Text>
+            </Text>
+          </TouchableOpacity>
+          <Text style={styles.caption}>
+            "오늘의 나를 있게 한 것은 우리 마을의 도서관이었다."
+          </Text>
+          <Text style={styles.caption}>- 빌게이츠</Text>
+        </View>
+      </KeyboardAvoidingView>
     </View>
   );
 }
@@ -126,7 +125,7 @@ export function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EBE5D9',
+    backgroundColor: '#FAFAF5',
   },
   backgroundImage: {
     flex: 1,
@@ -150,13 +149,22 @@ const styles = StyleSheet.create({
     maxWidth: 500,
     alignSelf: 'center',
   },
+  loginImage: {
+    width: 192,
+    height: 192,
+    alignSelf: 'center',
+    marginBottom: 24,
+  },
   header: {
     alignItems: 'center',
     marginBottom: 48,
   },
   title: {
-    fontSize: 32,
-    color: colors.textPrimary,
+    fontFamily: 'GowunDodum_400Regular',
+    fontSize: 30,
+    lineHeight: 36,
+    letterSpacing: -0.75,
+    color: '#758961',
     marginBottom: 12,
     textAlign: 'center',
   },

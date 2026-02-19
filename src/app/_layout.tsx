@@ -4,6 +4,8 @@ import { PaperProvider } from 'react-native-paper';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as SplashScreen from 'expo-splash-screen';
+import { useFonts } from 'expo-font';
+import { GowunDodum_400Regular } from '@expo-google-fonts/gowun-dodum';
 import { registerTranslation } from 'react-native-paper-dates';
 import ko from 'react-native-paper-dates/src/translations/ko';
 import { AuthProvider, useAuth } from '@/features/auth/auth-context';
@@ -48,6 +50,12 @@ function AuthGate() {
 }
 
 export default function RootLayout() {
+  const [fontsLoaded] = useFonts({
+    GowunDodum_400Regular,
+  });
+
+  if (!fontsLoaded) return null;
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>

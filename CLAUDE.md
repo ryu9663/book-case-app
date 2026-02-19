@@ -30,7 +30,7 @@ src/
 ├── components/ui/        # 공통 UI (LoadingScreen, ErrorScreen, EmptyState, ConfirmDialog)
 └── lib/
     ├── api/mutator.ts    # Axios 인스턴스 + 401 interceptor + refresh rotation
-    ├── theme/            # MD3 테마, 색상 시스템
+    ├── theme/            # MD3 테마, 색상 시스템, 기본 폰트: Gowun Dodum (@expo-google-fonts/gowun-dodum)
     └── utils/storage.ts  # AsyncStorage 래퍼 (토큰, 유저)
 ```
 
@@ -46,4 +46,6 @@ src/
 - **선언적 쿼리**: `setTimeout` + `refetch()` 금지 → `enabled` 조건으로 제어
 - **테스트**: react-native-paper TextInput은 `testID` 필수 (label 중복 렌더링). jest@^29 고정 (jest 30은 jest-expo 호환 불가)
 - **의존성**: Expo peer dep 충돌 시 `npm install --legacy-peer-deps`
+- **이미지 import**: 상대 경로 금지 → `@assets/*` 절대 경로 사용 (e.g. `require('@assets/login/login-image.webp')`)
+- **폰트**: 기본 폰트 Gowun Dodum (`@expo-google-fonts/gowun-dodum`). `_layout.tsx`에서 로드, `theme/index.ts`에서 `configureFonts`로 전역 적용
 - **커밋**: 한국어, 기능별 분리
