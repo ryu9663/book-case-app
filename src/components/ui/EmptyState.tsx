@@ -45,18 +45,17 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: '700',
+    fontFamily: 'GowunDodum_400Regular',
     color: colors.textPrimary,
     textAlign: 'center',
     marginBottom: 8,
-
   },
   description: {
     fontSize: 16,
+    fontFamily: 'GowunDodum_400Regular',
     color: colors.textMuted,
     textAlign: 'center',
     marginBottom: 24,
-
     lineHeight: 24,
   },
   button: {
