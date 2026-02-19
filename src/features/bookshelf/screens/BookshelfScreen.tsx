@@ -3,9 +3,9 @@ import {
   View,
   ScrollView,
   RefreshControl,
-  StyleSheet,
   Pressable,
   ImageBackground,
+  useWindowDimensions,
 } from 'react-native';
 import { Text, Snackbar } from 'react-native-paper';
 import { router } from 'expo-router';
@@ -21,11 +21,15 @@ import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { ErrorScreen } from '@/components/ui/ErrorScreen';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { BookCover } from '../components/BookCover';
-import { colors } from '@/lib/theme/colors';
 import { BookResponseDto } from '@/api/generated/models';
+import { styles } from './BookshelfScreen.styles';
 
-const BOOKS_PER_ROW = 3;
-const MIN_TOTAL_SLOTS = 9;
+const BOOK_WIDTH = 100;
+const BOOK_ASPECT = 2 / 3.2;
+const BOOK_HEIGHT = BOOK_WIDTH / BOOK_ASPECT;
+const ROW_GAP = 10;
+const ROW_PADDING_H = 22;
+const MIN_ROWS = 3;
 
 function chunkArray<T>(arr: T[], size: number): T[][] {
   const chunks: T[][] = [];
@@ -39,6 +43,7 @@ type GridItem = BookResponseDto | 'add';
 
 export function BookshelfScreen() {
   const insets = useSafeAreaInsets();
+  const { width: screenWidth } = useWindowDimensions();
   const queryClient = useQueryClient();
   const { data: books, isLoading, error, refetch } = useBookControllerFindAll();
 
@@ -50,17 +55,22 @@ export function BookshelfScreen() {
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [snackbar, setSnackbar] = useState('');
 
+  const booksPerRow = useMemo(() => {
+    const availableWidth = screenWidth - ROW_PADDING_H * 2;
+    return Math.max(1, Math.floor((availableWidth + ROW_GAP) / (BOOK_WIDTH + ROW_GAP)));
+  }, [screenWidth]);
+
   const rows = useMemo(() => {
     const bookList = books ?? [];
     const items: GridItem[] = [...bookList, 'add'];
-    // Pad to minimum slots for a full bookshelf look
-    const totalSlots = Math.max(items.length, MIN_TOTAL_SLOTS);
+    const minTotalSlots = booksPerRow * MIN_ROWS;
+    const totalSlots = Math.max(items.length, minTotalSlots);
     const padded: (GridItem | null)[] = [...items];
     while (padded.length < totalSlots) {
       padded.push(null);
     }
-    return chunkArray(padded, BOOKS_PER_ROW);
-  }, [books]);
+    return chunkArray(padded, booksPerRow);
+  }, [books, booksPerRow]);
 
   const handleBookPress = useCallback((book: BookResponseDto) => {
     router.push(`/(main)/(bookshelf)/book/${book.id}`);
@@ -99,11 +109,11 @@ export function BookshelfScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.whiteOverlay} />
-
       {/* Header */}
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-        <Text style={styles.headerTitle}>나의 서재</Text>
+        <Text style={styles.headerTitle}>
+          나의 서재<Text style={styles.subTitle}>({bookCount}권의 기록)</Text>
+        </Text>
       </View>
 
       {/* Content */}
@@ -118,40 +128,38 @@ export function BookshelfScreen() {
           {rows.map((row, rowIdx) => (
             <View key={rowIdx} style={styles.rowWrapper}>
               {/* Book Row */}
-              <View style={styles.row}>
+              <View style={[styles.row, { minHeight: BOOK_HEIGHT }]}>
                 {row.map((item, colIdx) => {
                   if (item === null) {
                     return (
                       <View
                         key={`empty-${rowIdx}-${colIdx}`}
-                        style={styles.gridItem}
+                        style={{ width: BOOK_WIDTH }}
                       />
                     );
                   }
                   if (item === 'add') {
                     return (
-                      <View key="add" style={styles.gridItem}>
+                      <View key="add" style={{ width: BOOK_WIDTH }}>
                         <Pressable
                           testID="add-book-button"
                           onPress={goAddBook}
                           style={({ pressed }) => [
                             styles.addButton,
-                            pressed && {
-                              backgroundColor: 'rgba(255,255,255,0.05)',
-                            },
+                            pressed && { opacity: 0.5 },
                           ]}
                         >
                           <MaterialCommunityIcons
                             name="plus"
                             size={24}
-                            color="rgba(255,255,255,0.6)"
+                            color="rgba(117, 137, 97,0.4)"
                           />
                         </Pressable>
                       </View>
                     );
                   }
                   return (
-                    <View key={item.id} style={styles.gridItem}>
+                    <View key={item.id} style={{ width: BOOK_WIDTH }}>
                       <BookCover
                         book={item}
                         onPress={() => handleBookPress(item)}
@@ -161,9 +169,9 @@ export function BookshelfScreen() {
                   );
                 })}
                 {/* Fill remaining slots if row is short */}
-                {row.length < BOOKS_PER_ROW &&
-                  Array.from({ length: BOOKS_PER_ROW - row.length }).map(
-                    (_, i) => <View key={`pad-${i}`} style={styles.gridItem} />,
+                {row.length < booksPerRow &&
+                  Array.from({ length: booksPerRow - row.length }).map(
+                    (_, i) => <View key={`pad-${i}`} style={{ width: BOOK_WIDTH }} />,
                   )}
               </View>
 
@@ -176,12 +184,6 @@ export function BookshelfScreen() {
           ))}
         </View>
       </ScrollView>
-
-      {/* Footer */}
-      <View style={[styles.footer, { paddingBottom: insets.bottom + 12 }]}>
-        <Text style={styles.footerText}>{bookCount}권의 수집된 이야기</Text>
-        <Text style={styles.footerText}>Established 2026</Text>
-      </View>
 
       <ConfirmDialog
         visible={deleteDialogVisible}
@@ -202,118 +204,3 @@ export function BookshelfScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.shelfBg,
-  },
-  backgroundImage: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
-  whiteOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(255, 253, 245, 0.40)',
-  },
-  // Header
-  header: {
-    paddingHorizontal: 24,
-    paddingBottom: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    // backgroundColor: `${colors.headerBg}E6`, // 90% opacity
-    backgroundColor: 'rgba(255,255,255,0.3)',
-
-    zIndex: 20,
-  },
-  // header: {
-  //   backgroundColor: 'rgba(255,255,255,0.3)',
-  //   elevation: 0,
-  //   borderBottomWidth: 1,
-  //   borderBottomColor: 'rgba(255,255,255,0.1)',
-  // },
-  headerTitle: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: colors.shelfBrown,
-  },
-  // Scroll Content
-  scroll: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingTop: 16,
-    paddingBottom: 80,
-  },
-
-  rowWrapper: {
-    marginBottom: 32,
-  },
-  row: {
-    flexDirection: 'row',
-    gap: 10,
-    paddingHorizontal: 8,
-  },
-  gridItem: {
-    flex: 1,
-  },
-
-  // Add Button
-  addButton: {
-    width: '100%',
-    aspectRatio: 2 / 3.2,
-    borderWidth: 1.5,
-    borderStyle: 'dashed',
-    borderColor: 'rgba(255,255,255,0.6)',
-    borderRadius: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  // Shelf Plank
-  shelfPlank: {
-    marginTop: 6,
-    marginHorizontal: -8,
-  },
-  shelfTop: {
-    height: 8,
-    backgroundColor: colors.shelfPlank,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: 'rgba(255,255,255,0.2)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 8,
-    elevation: 6,
-  },
-  shelfSide: {
-    height: 6,
-    backgroundColor: colors.shelfPlankSide,
-    borderBottomLeftRadius: 2,
-    borderBottomRightRadius: 2,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: 'rgba(0,0,0,0.1)',
-  },
-
-  // Footer
-  footer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    paddingHorizontal: 20,
-    paddingTop: 24,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    zIndex: 20,
-  },
-  footerText: {
-    fontSize: 10,
-    color: 'rgba(255,255,255,0.7)',
-    fontStyle: 'italic',
-  },
-});

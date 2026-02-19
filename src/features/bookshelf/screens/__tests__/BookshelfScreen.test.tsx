@@ -170,13 +170,13 @@ describe('BookshelfScreen', () => {
     it('헤더에 "나의 서재" 타이틀이 표시된다', () => {
       render(<BookshelfScreen />);
 
-      expect(screen.getByText('나의 서재')).toBeTruthy();
+      expect(screen.getByText('나의 서재', { exact: false })).toBeTruthy();
     });
 
-    it('푸터에 책 수가 표시된다', () => {
+    it('헤더에 책 수가 표시된다', () => {
       render(<BookshelfScreen />);
 
-      expect(screen.getByText('2권의 수집된 이야기')).toBeTruthy();
+      expect(screen.getByText('(2권의 기록)')).toBeTruthy();
     });
 
     it('책이 없으면 0권으로 표시된다', () => {
@@ -189,7 +189,7 @@ describe('BookshelfScreen', () => {
 
       render(<BookshelfScreen />);
 
-      expect(screen.getByText('0권의 수집된 이야기')).toBeTruthy();
+      expect(screen.getByText('(0권의 기록)')).toBeTruthy();
     });
 
     it('로딩 중이면 LoadingScreen을 표시한다', () => {
