@@ -23,6 +23,20 @@ const mockBook = {
   userId: 1,
 };
 
+const mockReviews = [
+  {
+    id: 1,
+    title: '독후감 1',
+    content: '내용 1',
+    bookId: 1,
+    userId: 1,
+    startDate: '2024-01-01',
+    endDate: '2024-01-10',
+    startPage: 1,
+    endPage: 50,
+  },
+];
+
 // --- Mock functions ---
 
 const mockRefetch = jest.fn();
@@ -37,6 +51,9 @@ let mockFindOneReturn: {
   refetch: jest.Mock;
 };
 let mockUpdateIsPending = false;
+let mockReviewsReturn: { data: typeof mockReviews | undefined } = {
+  data: mockReviews,
+};
 
 // --- Mocks ---
 
@@ -51,6 +68,10 @@ jest.mock('@/api/generated/books/books', () => ({
   }),
   getBookControllerFindOneQueryKey: (id: number) => [`/books/${id}`],
   getBookControllerFindAllQueryKey: () => ['/books'],
+}));
+
+jest.mock('@/api/generated/reviews/reviews', () => ({
+  useReviewControllerFindAll: () => mockReviewsReturn,
 }));
 
 jest.mock('@tanstack/react-query', () => ({
@@ -80,6 +101,8 @@ jest.mock('@/lib/theme/colors', () => ({
     textSecondary: '#5D4037',
     textMuted: '#8D6E63',
     warmWhite: '#FAF3E0',
+    contentBg: '#FDFCF0',
+    accentGreen: '#558B2F',
     error: '#B71C1C',
   },
   getSpineColor: () => '#8B4513',
@@ -188,23 +211,18 @@ jest.mock('../../components/BookInfoCard', () => ({
   },
 }));
 
-const mockOnAddReview = jest.fn();
 jest.mock('@/features/review/components/ReviewList', () => ({
-  ReviewList: ({ bookId, onAddReview }: any) => {
-    mockOnAddReview.mockImplementation(onAddReview);
-    const { View, Text, Pressable } = require('react-native');
+  ReviewList: ({ bookId }: any) => {
+    const { View, Text } = require('react-native');
     return (
       <View testID="review-list">
         <Text>독후감 목록</Text>
-        <Pressable testID="add-review-button" onPress={onAddReview}>
-          <Text>독후감 작성</Text>
-        </Pressable>
       </View>
     );
   },
 }));
 
-// react-native-paper: Appbar + Snackbar
+// react-native-paper: Appbar + Snackbar + FAB
 jest.mock('react-native-paper', () => {
   const RN = require('react-native');
   return {
@@ -226,10 +244,20 @@ jest.mock('react-native-paper', () => {
         </RN.Pressable>
       ),
     },
+    FAB: ({ onPress, accessibilityLabel }: any) => (
+      <RN.Pressable
+        testID="fab-add-review"
+        onPress={onPress}
+        accessibilityLabel={accessibilityLabel}
+      >
+        <RN.Text>+</RN.Text>
+      </RN.Pressable>
+    ),
     Snackbar: ({ visible, children }: any) => {
       if (!visible) return null;
       return <RN.Text testID="snackbar">{children}</RN.Text>;
     },
+    Text: RN.Text,
   };
 });
 
@@ -241,6 +269,7 @@ beforeEach(() => {
   jest.clearAllMocks();
   mockUpdateIsPending = false;
   mockEditDialogOnSave = null;
+  mockReviewsReturn = { data: mockReviews };
   mockFindOneReturn = {
     data: mockBook,
     isLoading: false,
@@ -315,18 +344,28 @@ describe('BookDetailScreen', () => {
   });
 
   describe('정상 렌더링', () => {
-    it('헤더에 책 제목이 표시된다', () => {
+    it('헤더에 "책 상세"가 표시된다', () => {
       render(<BookDetailScreen />);
 
-      expect(screen.getByTestId('header-title')).toHaveTextContent(
-        '테스트 책',
-      );
+      expect(screen.getByTestId('header-title')).toHaveTextContent('책 상세');
+    });
+
+    it('책 표지가 렌더링된다', () => {
+      render(<BookDetailScreen />);
+
+      expect(screen.getByTestId('book-cover')).toBeTruthy();
     });
 
     it('ReviewList가 렌더링된다', () => {
       render(<BookDetailScreen />);
 
       expect(screen.getByTestId('review-list')).toBeTruthy();
+    });
+
+    it('마지막 읽은 페이지가 표시된다', () => {
+      render(<BookDetailScreen />);
+
+      expect(screen.getByText(/p\.50/)).toBeTruthy();
     });
   });
 
@@ -339,10 +378,10 @@ describe('BookDetailScreen', () => {
       expect(router.back).toHaveBeenCalled();
     });
 
-    it('독후감 작성 버튼을 누르면 리뷰 생성 페이지로 이동한다', () => {
+    it('FAB을 누르면 리뷰 생성 페이지로 이동한다', () => {
       render(<BookDetailScreen />);
 
-      fireEvent.press(screen.getByTestId('add-review-button'));
+      fireEvent.press(screen.getByTestId('fab-add-review'));
 
       expect(router.push).toHaveBeenCalledWith(
         '/(main)/(bookshelf)/review/create?bookId=1',

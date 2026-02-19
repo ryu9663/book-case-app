@@ -1,16 +1,9 @@
-import { useState, useCallback } from 'react';
-import {
-  StyleSheet,
-  View,
-  Pressable,
-  LayoutAnimation,
-} from 'react-native';
-import { Card, Text, IconButton, Divider } from 'react-native-paper';
+import { StyleSheet, View, Pressable } from 'react-native';
+import { Text, IconButton } from 'react-native-paper';
 import { colors } from '@/lib/theme/colors';
 import type { ReviewResponseDto } from '@/api/generated/models';
-import type { TextLayoutEvent } from 'react-native';
 
-const MAX_LINES = 5;
+const MAX_LINES = 3;
 
 interface Props {
   review: ReviewResponseDto;
@@ -19,148 +12,101 @@ interface Props {
 }
 
 function formatDateDisplay(dateStr: string): string {
-  return dateStr.replace(/-/g, '.');
+  const [y, m, d] = dateStr.split('-');
+  return `${y}년 ${Number(m)}월 ${Number(d)}일`;
 }
 
 export function ReviewCard({ review, onEdit, onDelete }: Props) {
-  const [expanded, setExpanded] = useState(false);
-  const [isTruncatable, setIsTruncatable] = useState(false);
-
-  const handleTextLayout = useCallback(
-    (e: TextLayoutEvent) => {
-      if (!isTruncatable && e.nativeEvent.lines.length >= MAX_LINES) {
-        setIsTruncatable(true);
-      }
-    },
-    [isTruncatable],
-  );
-
   return (
-    <Card style={styles.card}>
-      <Card.Title
-        title={review.title}
-        titleStyle={styles.title}
-        right={() => (
-          <>
+    <Pressable onPress={onEdit} style={styles.card}>
+      <View style={styles.accentLine} />
+      <View style={styles.body}>
+        <View style={styles.headerRow}>
+          <Text style={styles.date}>{formatDateDisplay(review.endDate)}</Text>
+          <View style={styles.headerRight}>
+            <View style={styles.pagesBadge}>
+              <Text style={styles.pagesBadgeText}>
+                p.{review.startPage}–{review.endPage}
+              </Text>
+            </View>
             <IconButton
-              icon="pencil"
-              size={18}
-              onPress={onEdit}
-              accessibilityLabel="독후감 수정"
-            />
-            <IconButton
-              icon="delete"
-              size={18}
+              icon="delete-outline"
+              size={16}
+              iconColor={colors.textMuted}
               onPress={onDelete}
               accessibilityLabel="독후감 삭제"
+              style={styles.deleteButton}
             />
-          </>
-        )}
-        rightStyle={styles.actions}
-      />
-      <Card.Content>
+          </View>
+        </View>
         <Text
           testID="review-content"
-          numberOfLines={expanded ? undefined : MAX_LINES}
-          onTextLayout={handleTextLayout}
+          numberOfLines={MAX_LINES}
           style={styles.content}
         >
-          <Text style={styles.firstLetter}>{review.content.charAt(0)}</Text>
-          {review.content.slice(1)}
+          "{review.content}"
         </Text>
-        {isTruncatable && (
-          <Pressable
-            onPress={() => {
-              LayoutAnimation.configureNext(
-                LayoutAnimation.Presets.easeInEaseOut,
-              );
-              setExpanded(!expanded);
-            }}
-            accessibilityRole="button"
-            accessibilityLabel={
-              expanded ? '독후감 내용 접기' : '독후감 내용 더보기'
-            }
-            style={styles.toggleButton}
-          >
-            <Text style={styles.toggleText}>
-              {expanded ? '접기' : '더보기'}
-            </Text>
-          </Pressable>
-        )}
-        <Divider style={styles.divider} />
-        <View style={styles.metaRow}>
-          <Text style={styles.metaText}>
-            {formatDateDisplay(review.startDate)} ~{' '}
-            {formatDateDisplay(review.endDate)}
-          </Text>
-          <Text style={styles.metaText}>
-            p.{review.startPage} - p.{review.endPage}
-          </Text>
-        </View>
-      </Card.Content>
-    </Card>
+      </View>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: 16,
-    backgroundColor: colors.warmWhite,
-    borderWidth: 1,
-    borderColor: '#E6DCC8',
-    borderRadius: 0,
-    borderBottomRightRadius: 16,
+    flexDirection: 'row',
+    marginBottom: 12,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    overflow: 'hidden',
     shadowColor: '#000',
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    elevation: 1,
   },
-  title: {
-    fontSize: 16,
+  accentLine: {
+    width: 4,
+    backgroundColor: colors.accentGreen,
+  },
+  body: {
+    flex: 1,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+  },
+  date: {
+    fontSize: 15,
     fontWeight: '700',
     color: colors.textPrimary,
-
+  },
+  pagesBadge: {
+    backgroundColor: colors.accentGreen,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 10,
+  },
+  pagesBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#fff',
+    letterSpacing: 0.3,
+  },
+  deleteButton: {
+    margin: 0,
   },
   content: {
     fontSize: 14,
     color: colors.textSecondary,
-    lineHeight: 22,
-
-    marginTop: 4,
-  },
-  firstLetter: {
-    fontSize: 28,
-    lineHeight: 34,
-
-    color: colors.textPrimary,
-  },
-  actions: {
-    flexDirection: 'row',
-  },
-  divider: {
-    marginTop: 12,
-    marginBottom: 8,
-    backgroundColor: '#E6DCC8',
-  },
-  metaRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  metaText: {
-    fontSize: 12,
-    color: colors.textMuted,
-
-  },
-  toggleButton: {
-    alignSelf: 'flex-end' as const,
-    marginTop: 6,
-    padding: 15,
-  },
-  toggleText: {
-    fontSize: 13,
-    color: colors.textMuted,
-
-    textDecorationLine: 'underline' as const,
+    lineHeight: 21,
   },
 });

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View, ScrollView } from 'react-native';
-import { Appbar, Snackbar, Text } from 'react-native-paper';
+import { Appbar, FAB, Snackbar, Text } from 'react-native-paper';
 import { router, useLocalSearchParams } from 'expo-router';
 
 import { BookEditDialog } from '../components/BookEditDialog';
@@ -85,13 +85,12 @@ export function BookDetailScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.whiteOverlay} />
       <Appbar.Header style={styles.header}>
         <Appbar.BackAction
           color={colors.shelfBrown}
           onPress={() => router.back()}
         />
-        <Appbar.Content title={book.title} titleStyle={styles.headerTitle} />
+        <Appbar.Content title="책 상세" titleStyle={styles.headerTitle} />
         <Appbar.Action
           icon="pencil"
           color={colors.shelfBrown}
@@ -104,33 +103,39 @@ export function BookDetailScreen() {
         />
       </Appbar.Header>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.coverSection}>
+        <View style={styles.coverBackground}>
           <BookCover
             title={book.title}
             author={book.author}
             thumbnail={book.thumbnail}
           />
-          <View style={styles.bookInfo}>
-            <Text style={styles.bookTitle}>{book.title}</Text>
-            <Text style={styles.bookAuthor}>{book.author}</Text>
-            {lastReadPage !== null && (
-              <View style={styles.readingStatus}>
-                <Text style={styles.readingStatusText}>
-                  마지막으로 읽은 페이지: p.{lastReadPage}
-                </Text>
-              </View>
-            )}
-          </View>
+        </View>
+        <View style={styles.infoCard}>
+          <Text style={styles.bookTitle} textBreakStrategy="simple">
+            {book.title}
+          </Text>
+          <Text style={styles.bookAuthor} textBreakStrategy="simple">
+            {book.author}
+          </Text>
+          {lastReadPage !== null && (
+            <Text style={styles.readingStatusText}>
+              마지막으로 읽은 페이지: p.{lastReadPage}
+            </Text>
+          )}
         </View>
         <View style={styles.reviewSection}>
-          <ReviewList
-            bookId={bookId}
-            onAddReview={() =>
-              router.push(`/(main)/(bookshelf)/review/create?bookId=${bookId}`)
-            }
-          />
+          <ReviewList bookId={bookId} />
         </View>
       </ScrollView>
+      <FAB
+        icon="plus"
+        style={styles.fab}
+        color="#fff"
+        onPress={() =>
+          router.push(`/(main)/(bookshelf)/review/create?bookId=${bookId}`)
+        }
+        accessibilityLabel="독후감 작성"
+      />
       <BookEditDialog
         visible={editVisible}
         book={book}

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text, Button, Snackbar } from 'react-native-paper';
+import { Text, Snackbar } from 'react-native-paper';
 import { router } from 'expo-router';
 import { ReviewCard } from './ReviewCard';
 import { ReviewDeleteDialog } from './ReviewDeleteDialog';
@@ -13,14 +13,13 @@ import { useQueryClient } from '@tanstack/react-query';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { colors } from '@/lib/theme/colors';
-import type { Review, ReviewResponseDto } from '@/api/generated/models';
+import type { ReviewResponseDto } from '@/api/generated/models';
 
 interface Props {
   bookId: number;
-  onAddReview: () => void;
 }
 
-export function ReviewList({ bookId, onAddReview }: Props) {
+export function ReviewList({ bookId }: Props) {
   const queryClient = useQueryClient();
   const { data: reviews, isLoading } = useReviewControllerFindAll(bookId);
   const deleteReview = useReviewControllerRemove();
@@ -48,25 +47,23 @@ export function ReviewList({ bookId, onAddReview }: Props) {
 
   if (isLoading) return <LoadingScreen message="독후감 로딩 중..." />;
 
+  const entryCount = reviews?.length ?? 0;
+
   return (
     <View>
       <View style={styles.header}>
         <Text style={styles.sectionTitle}>독후감</Text>
-        <Button
-          mode="contained-tonal"
-          icon="plus"
-          onPress={onAddReview}
-          compact
-          style={styles.addButton}
-        >
-          작성
-        </Button>
+        {entryCount > 0 && (
+          <View style={styles.countBadge}>
+            <Text style={styles.countText}>{entryCount}개</Text>
+          </View>
+        )}
       </View>
 
       {!reviews || reviews.length === 0 ? (
         <EmptyState
           title="아직 독후감이 없어요"
-          description="첫 번째 독후감을 작성해보세요!"
+          description="우측 하단 + 버튼으로 작성해보세요!"
         />
       ) : (
         reviews.map((review) => (
@@ -74,7 +71,9 @@ export function ReviewList({ bookId, onAddReview }: Props) {
             key={review.id}
             review={review}
             onEdit={() =>
-              router.push(`/(main)/(bookshelf)/review/${review.id}?bookId=${bookId}`)
+              router.push(
+                `/(main)/(bookshelf)/review/${review.id}?bookId=${bookId}`,
+              )
             }
             onDelete={() => {
               setSelectedReview(review);
@@ -105,16 +104,24 @@ export function ReviewList({ bookId, onAddReview }: Props) {
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 12,
+    gap: 8,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: '700',
     color: colors.textPrimary,
   },
-  addButton: {
-    backgroundColor: 'rgba(255,255,255,0.8)',
+  countBadge: {
+    backgroundColor: 'rgba(85, 139, 47, 0.12)',
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 10,
+  },
+  countText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.accentGreen,
   },
 });
