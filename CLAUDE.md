@@ -45,6 +45,7 @@ src/
 
 - **선언적 쿼리**: `setTimeout` + `refetch()` 금지 → `enabled` 조건으로 제어
 - **테스트**: react-native-paper TextInput은 `testID` 필수 (label 중복 렌더링). jest@^29 고정 (jest 30은 jest-expo 호환 불가)
+- **테스트 실패 대응**: 테스트 실패 시 먼저 구현부 버그 여부를 분석한다. 구현부에 문제가 있으면 구현부를 수정한다. 테스트 코드 수정은 기능이 의도적으로 변경된 경우에만 허용하며, 반드시 사유를 설명한 후 진행한다.
 - **의존성**: Expo peer dep 충돌 시 `npm install --legacy-peer-deps`
 - **이미지 import**: 상대 경로 금지 → `@assets/*` 절대 경로 사용 (e.g. `require('@assets/login/login-image.webp')`)
 - **폰트**: 기본 폰트 Gowun Dodum (`@expo-google-fonts/gowun-dodum`). `_layout.tsx`에서 로드, `theme/index.ts`에서 `configureFonts`로 전역 적용
