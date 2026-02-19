@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
-import { Appbar, Snackbar } from 'react-native-paper';
+import { View, ScrollView } from 'react-native';
+import { Appbar, Snackbar, Text } from 'react-native-paper';
 import { router, useLocalSearchParams } from 'expo-router';
 
 import { BookEditDialog } from '../components/BookEditDialog';
+import { BookCover } from '../components/BookCover';
 import {
   useBookControllerFindOne,
   useBookControllerUpdate,
@@ -11,12 +12,14 @@ import {
   getBookControllerFindAllQueryKey,
   getBookControllerFindOneQueryKey,
 } from '@/api/generated/books/books';
+import { useReviewControllerFindAll } from '@/api/generated/reviews/reviews';
 import { useQueryClient } from '@tanstack/react-query';
 import { ReviewList } from '@/features/review/components/ReviewList';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { ErrorScreen } from '@/components/ui/ErrorScreen';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { colors } from '@/lib/theme/colors';
+import { styles } from './BookDetailScreen.styles';
 
 export function BookDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -27,6 +30,13 @@ export function BookDetailScreen() {
     error,
     refetch,
   } = useBookControllerFindOne(bookId);
+
+  const { data: reviews } = useReviewControllerFindAll(bookId);
+  const lastReadPage =
+    reviews && reviews.length > 0
+      ? [...reviews].sort((a, b) => b.endDate.localeCompare(a.endDate))[0]
+          .endPage
+      : null;
 
   const queryClient = useQueryClient();
   const updateBook = useBookControllerUpdate();
@@ -94,18 +104,24 @@ export function BookDetailScreen() {
         />
       </Appbar.Header>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* <View style={styles.coverSection}>
-            <BookOpenAnimation>
-              <BookCover
-                title={book.title}
-                author={book.author}
-                thumbnail={book.thumbnail}
-              />
-            </BookOpenAnimation>
-          </View> */}
-
-        {/* <BookInfoCard book={book} /> */}
-
+        <View style={styles.coverSection}>
+          <BookCover
+            title={book.title}
+            author={book.author}
+            thumbnail={book.thumbnail}
+          />
+          <View style={styles.bookInfo}>
+            <Text style={styles.bookTitle}>{book.title}</Text>
+            <Text style={styles.bookAuthor}>{book.author}</Text>
+            {lastReadPage !== null && (
+              <View style={styles.readingStatus}>
+                <Text style={styles.readingStatusText}>
+                  마지막으로 읽은 페이지: p.{lastReadPage}
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
         <View style={styles.reviewSection}>
           <ReviewList
             bookId={bookId}
@@ -140,47 +156,3 @@ export function BookDetailScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  backgroundImage: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-    resizeMode: 'contain',
-  },
-  whiteOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(255, 253, 245, 0.7)',
-  },
-  header: {
-    backgroundColor: 'rgba(255,255,255,0.3)',
-    elevation: 0,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.1)',
-  },
-  headerTitle: {
-    color: colors.shelfBrown,
-    fontWeight: '700',
-    fontSize: 20,
-  },
-  scrollContent: {
-    padding: 16,
-    paddingBottom: 40,
-  },
-  coverSection: {
-    alignItems: 'center',
-    paddingVertical: 32,
-    // Add a spotlight effect or shadow for the book sitting on desk
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
-    elevation: 10,
-  },
-  reviewSection: {
-    marginTop: 24,
-  },
-});
