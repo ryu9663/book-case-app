@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { View, Pressable, StyleSheet, useWindowDimensions } from 'react-native';
 import { Portal, TextInput, Button, Text } from 'react-native-paper';
 import { BlurView } from 'expo-blur';
-import { colors } from '@/lib/theme/colors';
 import { styles } from './EditBookModal.styles';
 import type { BookResponseDto } from '@/api/generated/models';
 
@@ -22,15 +21,27 @@ export function EditBookModal({
   isLoading,
 }: Props) {
   const { width: screenWidth } = useWindowDimensions();
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
+
+  // refs로 텍스트 값 추적 (한글 IME 조합 깨짐 방지)
+  const titleRef = useRef('');
+  const authorRef = useRef('');
+  // book 변경 시 defaultValue 갱신을 위한 key
+  const [formKey, setFormKey] = useState(0);
 
   useEffect(() => {
     if (book) {
-      setTitle(book.title ?? '');
-      setAuthor(book.author ?? '');
+      titleRef.current = book.title ?? '';
+      authorRef.current = book.author ?? '';
+      setFormKey((prev) => prev + 1);
     }
   }, [book]);
+
+  const handleSave = () => {
+    const title = titleRef.current.trim();
+    const author = authorRef.current.trim();
+    if (!title) return;
+    onSave(title, author);
+  };
 
   const modalWidth = screenWidth * 0.85;
 
@@ -52,14 +63,16 @@ export function EditBookModal({
 
         {/* Modal Card */}
         <View style={styles.modalContainer} pointerEvents="box-none">
-          <View style={[styles.modal, { width: modalWidth }]}>
+          <View key={formKey} style={[styles.modal, { width: modalWidth }]}>
             <Text style={styles.title}>책 정보 수정</Text>
 
             <TextInput
               testID="edit-title"
               label="제목"
-              value={title}
-              onChangeText={setTitle}
+              defaultValue={titleRef.current}
+              onChangeText={(text) => {
+                titleRef.current = text;
+              }}
               mode="outlined"
               outlineColor={'#8CEE2B'}
               activeOutlineColor={'#8CEE2B'}
@@ -68,8 +81,10 @@ export function EditBookModal({
             <TextInput
               testID="edit-author"
               label="저자"
-              value={author}
-              onChangeText={setAuthor}
+              defaultValue={authorRef.current}
+              onChangeText={(text) => {
+                authorRef.current = text;
+              }}
               mode="outlined"
               outlineColor={'#8CEE2B'}
               activeOutlineColor={'#8CEE2B'}
@@ -79,9 +94,9 @@ export function EditBookModal({
             <View style={styles.actionRow}>
               <Button
                 mode="contained"
-                onPress={() => onSave(title, author)}
+                onPress={handleSave}
                 loading={isLoading}
-                disabled={isLoading || !title.trim()}
+                disabled={isLoading}
                 style={styles.saveButton}
                 labelStyle={styles.saveButtonLabel}
               >

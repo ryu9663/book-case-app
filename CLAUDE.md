@@ -49,5 +49,6 @@ src/
 - **의존성**: Expo peer dep 충돌 시 `npm install --legacy-peer-deps`
 - **이미지 import**: 상대 경로 금지 → `@assets/*` 절대 경로 사용 (e.g. `require('@assets/login/login-image.webp')`)
 - **폰트**: 기본 폰트 Gowun Dodum (`@expo-google-fonts/gowun-dodum`). `_layout.tsx`에서 로드, `theme/index.ts`에서 `configureFonts`로 전역 적용. **400 weight만 제공**하므로 `fontWeight: '700'` 등 굵기 지정 금지 (Android에서 시스템 폰트로 fallback됨). 굵기 강조는 `fontSize`나 `color` 대비로 대체
+- **한글 IME**: TextInput에 `value` + `onChangeText` (controlled) 사용 금지 — 한글 조합이 깨짐. `useRef` + `defaultValue` + `onChangeText`로 uncontrolled 패턴 사용. 초기값 갱신이 필요하면 `key`를 변경하여 리마운트
 - **스타일 분리**: `StyleSheet.create()`는 컴포넌트 파일과 분리하여 `*.styles.ts` 파일로 관리 (e.g. `AddBookModal.styles.ts`)
 - **커밋**: 한국어, 기능별 분리
