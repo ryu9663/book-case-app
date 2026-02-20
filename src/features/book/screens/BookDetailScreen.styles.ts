@@ -55,7 +55,6 @@ export const styles = StyleSheet.create({
   readingStatusText: {
     fontSize: 13,
     color: colors.accentGreen,
-    fontWeight: '600',
     marginTop: 12,
     letterSpacing: 0.5,
   },

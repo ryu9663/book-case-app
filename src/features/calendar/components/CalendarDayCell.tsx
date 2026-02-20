@@ -124,7 +124,6 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   todayText: {
-    fontWeight: 'bold',
     color: colors.textPrimary,
   },
   disabledText: {

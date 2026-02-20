@@ -76,7 +76,6 @@ const styles = StyleSheet.create({
   },
   dateHeader: {
     fontSize: 15,
-    fontWeight: '600',
     color: colors.textPrimary,
     marginBottom: 12,
   },
@@ -106,7 +105,6 @@ const styles = StyleSheet.create({
   },
   bookTitle: {
     fontSize: 14,
-    fontWeight: '500',
     color: colors.textPrimary,
   },
   bookAuthor: {
@@ -116,7 +114,6 @@ const styles = StyleSheet.create({
   },
   reviewTitle: {
     fontSize: 13,
-    fontWeight: '500',
     color: colors.shelfBrown,
     marginTop: 6,
   },

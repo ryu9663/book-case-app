@@ -205,7 +205,6 @@ const styles = StyleSheet.create({
   },
   loginButtonLabel: {
     fontSize: 18,
-    fontWeight: '600',
     letterSpacing: 0.5,
     color: '#F5F5DC',
   },
@@ -220,7 +219,6 @@ const styles = StyleSheet.create({
   },
   signupText: {
     textDecorationLine: 'underline',
-    fontWeight: '600',
     color: colors.shelfBrown,
   },
   caption: {

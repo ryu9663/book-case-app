@@ -89,7 +89,6 @@ const styles = StyleSheet.create({
   title: {
     color: '#FFF8E1', // Old Paper white
     fontSize: 10,
-    fontWeight: '700',
     textAlign: 'center',
     width: 120,
     transform: [{ rotate: '-90deg' }],

@@ -48,14 +48,12 @@ const styles = StyleSheet.create({
     color: colors.textMuted, // Faded ink
     marginTop: 12,
 
-    fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
   value: {
     fontSize: 18,
     color: colors.textPrimary, // Dark ink
-    fontWeight: '500',
     marginTop: 4,
 
   },

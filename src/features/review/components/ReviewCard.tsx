@@ -86,7 +86,6 @@ const styles = StyleSheet.create({
   },
   date: {
     fontSize: 15,
-    fontWeight: '700',
     color: colors.textPrimary,
   },
   pagesBadge: {
@@ -97,7 +96,6 @@ const styles = StyleSheet.create({
   },
   pagesBadgeText: {
     fontSize: 11,
-    fontWeight: '700',
     color: '#fff',
     letterSpacing: 0.3,
   },

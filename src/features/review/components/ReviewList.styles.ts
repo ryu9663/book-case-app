@@ -21,7 +21,6 @@ export const styles = StyleSheet.create({
   },
   countText: {
     fontSize: 12,
-    fontWeight: '600',
     color: colors.accentGreen,
   },
 });

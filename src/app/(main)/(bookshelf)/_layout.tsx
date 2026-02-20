@@ -7,7 +7,7 @@ export default function BookshelfLayout() {
       screenOptions={{
         headerStyle: { backgroundColor: colors.shelfBrown },
         headerTintColor: '#FFFFFF',
-        headerTitleStyle: { fontWeight: '600' },
+        headerTitleStyle: { fontSize: 18 },
         contentStyle: { backgroundColor: colors.cream },
       }}
     >

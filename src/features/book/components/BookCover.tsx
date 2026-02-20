@@ -87,7 +87,6 @@ const styles = StyleSheet.create({
   title: {
     color: '#FFF8E1', // Old Paper
     fontSize: 18,
-    fontWeight: '700',
     textAlign: 'center',
     lineHeight: 26,
 

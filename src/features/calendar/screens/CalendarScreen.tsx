@@ -139,7 +139,6 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 22,
-    fontWeight: '700',
     color: colors.shelfBrown,
   },
   scroll: {
