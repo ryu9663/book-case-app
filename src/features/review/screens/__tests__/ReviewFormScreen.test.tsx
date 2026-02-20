@@ -124,7 +124,7 @@ describe('ReviewFormScreen', () => {
   it('제목/내용 빈값이면 스낵바 에러를 표시한다', () => {
     render(<ReviewFormScreen />);
 
-    fireEvent.press(screen.getByText('기록하기'));
+    fireEvent.press(screen.getByLabelText('독후감 작성'));
 
     expect(screen.getByText('제목과 내용을 입력해주세요.')).toBeTruthy();
     expect(mockCreateMutateAsync).not.toHaveBeenCalled();
@@ -137,7 +137,7 @@ describe('ReviewFormScreen', () => {
     fireEvent.changeText(screen.getByTestId('content-input'), '테스트 내용');
     fireEvent.changeText(screen.getByTestId('start-page-input'), '1');
     fireEvent.changeText(screen.getByTestId('end-page-input'), '100');
-    fireEvent.press(screen.getByText('기록하기'));
+    fireEvent.press(screen.getByLabelText('독후감 작성'));
 
     expect(screen.getByText('독서 기간을 선택해주세요.')).toBeTruthy();
     expect(mockCreateMutateAsync).not.toHaveBeenCalled();
@@ -154,7 +154,7 @@ describe('ReviewFormScreen', () => {
     // 페이지: start > end
     fireEvent.changeText(screen.getByTestId('start-page-input'), '200');
     fireEvent.changeText(screen.getByTestId('end-page-input'), '100');
-    fireEvent.press(screen.getByText('기록하기'));
+    fireEvent.press(screen.getByLabelText('독후감 작성'));
 
     expect(
       screen.getByText('시작 페이지가 끝 페이지보다 클 수 없습니다.'),
@@ -175,7 +175,7 @@ describe('ReviewFormScreen', () => {
     fireEvent.changeText(screen.getByTestId('start-page-input'), '1');
     fireEvent.changeText(screen.getByTestId('end-page-input'), '150');
 
-    fireEvent.press(screen.getByText('기록하기'));
+    fireEvent.press(screen.getByLabelText('독후감 작성'));
 
     await waitFor(() => {
       expect(mockCreateMutateAsync).toHaveBeenCalledWith({
@@ -206,7 +206,7 @@ describe('ReviewFormScreen', () => {
     // 페이지
     fireEvent.changeText(screen.getByTestId('start-page-input'), '1');
     fireEvent.changeText(screen.getByTestId('end-page-input'), '100');
-    fireEvent.press(screen.getByText('기록하기'));
+    fireEvent.press(screen.getByLabelText('독후감 작성'));
 
     expect(
       screen.getByText('시작 날짜가 끝 날짜보다 클 수 없습니다.'),
@@ -238,7 +238,7 @@ describe('ReviewFormScreen', () => {
 
     // 제목만 수정 후 제출
     fireEvent.changeText(screen.getByTestId('title-input'), '수정된 제목');
-    fireEvent.press(screen.getByText('수정 완료'));
+    fireEvent.press(screen.getByLabelText('독후감 수정'));
 
     await waitFor(() => {
       expect(mockUpdateMutateAsync).toHaveBeenCalledWith({
