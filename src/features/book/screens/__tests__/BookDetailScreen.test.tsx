@@ -157,11 +157,11 @@ jest.mock('@/components/ui/ConfirmDialog', () => ({
   },
 }));
 
-// BookEditDialog mock - onSave 콜백 캡처
+// EditBookModal mock - onSave 콜백 캡처
 let mockEditDialogOnSave: ((title: string, author: string) => void) | null =
   null;
-jest.mock('../../components/BookEditDialog', () => ({
-  BookEditDialog: ({ visible, book, onSave, onDismiss, isLoading }: any) => {
+jest.mock('../../components/EditBookModal', () => ({
+  EditBookModal: ({ visible, book, onSave, onDismiss, isLoading }: any) => {
     mockEditDialogOnSave = onSave;
     if (!visible) return null;
     const { View, Text, Pressable } = require('react-native');

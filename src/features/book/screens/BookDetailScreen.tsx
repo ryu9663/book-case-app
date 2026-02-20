@@ -3,7 +3,7 @@ import { View, ScrollView } from 'react-native';
 import { Appbar, FAB, Snackbar, Text } from 'react-native-paper';
 import { router, useLocalSearchParams } from 'expo-router';
 
-import { BookEditDialog } from '../components/BookEditDialog';
+import { EditBookModal } from '../components/EditBookModal';
 import { BookCover } from '../components/BookCover';
 import {
   useBookControllerFindOne,
@@ -136,7 +136,7 @@ export function BookDetailScreen() {
         }
         accessibilityLabel="독후감 작성"
       />
-      <BookEditDialog
+      <EditBookModal
         visible={editVisible}
         book={book}
         onSave={handleSave}

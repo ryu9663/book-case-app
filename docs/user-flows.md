@@ -36,7 +36,7 @@
 ├── 나의 서재 (bookshelf) 탭
 │   └── BookshelfScreen (책장 그리드)
 │       ├── 책 클릭 → BookDetailScreen
-│       │   ├── 수정: BookEditDialog → PATCH /books/{id}
+│       │   ├── 수정: EditBookModal → PATCH /books/{id}
 │       │   ├── 삭제: ConfirmDialog → DELETE /books/{id} → router.back()
 │       │   └── 독후감 추가 → ReviewFormScreen (create)
 │       │       └── POST /reviews/{bookId} → router.back()
