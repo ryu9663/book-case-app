@@ -11,7 +11,8 @@ interface Props {
 }
 
 export function EmptyState({
-  icon = '📚',
+  // icon = '📚',
+  icon,
   title,
   description,
   actionLabel,
@@ -19,7 +20,7 @@ export function EmptyState({
 }: Props) {
   return (
     <View style={styles.container}>
-      <Text style={styles.icon}>{icon}</Text>
+      {icon && <Text style={styles.icon}>{icon}</Text>}
       <Text style={styles.title}>{title}</Text>
       {description && <Text style={styles.description}>{description}</Text>}
       {actionLabel && onAction && (

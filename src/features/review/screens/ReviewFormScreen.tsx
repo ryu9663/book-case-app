@@ -7,7 +7,14 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import { TextInput, Button, Text, Snackbar } from 'react-native-paper';
+import {
+  TextInput,
+  Button,
+  Text,
+  Snackbar,
+  Icon,
+  FAB,
+} from 'react-native-paper';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { DatePickerModal } from 'react-native-paper-dates';
@@ -20,6 +27,7 @@ import {
 } from '@/api/generated/reviews/reviews';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { colors } from '@/lib/theme/colors';
+import { styles } from './ReviewFormScreen.style';
 
 function formatDate(date: Date): string {
   const y = date.getFullYear();
@@ -164,9 +172,7 @@ export function ReviewFormScreen() {
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.paperSheet}>
-          <Text style={styles.heading}>
-            {isEdit ? '기록 수정' : '독후감 기록'}
-          </Text>
+          <Text style={styles.heading}>독후감 기록</Text>
 
           <TextInput
             testID="title-input"
@@ -186,6 +192,11 @@ export function ReviewFormScreen() {
             style={styles.dateButton}
             onPress={() => setDatePickerOpen(true)}
           >
+            <Icon
+              source="calendar-range"
+              size={20}
+              color={colors.shelfHighlight}
+            />
             <Text style={styles.dateButtonText}>{dateLabel}</Text>
           </TouchableOpacity>
           <DatePickerModal
@@ -247,16 +258,13 @@ export function ReviewFormScreen() {
           />
         </View>
 
-        <Button
-          mode="contained"
+        <FAB
+          icon={isEdit ? 'pencil' : 'plus'}
+          style={styles.fab}
+          color="#fff"
           onPress={handleSubmit}
-          loading={isPending}
-          disabled={isPending}
-          style={styles.button}
-          labelStyle={styles.buttonLabel}
-        >
-          {isEdit ? '수정 완료' : '기록하기'}
-        </Button>
+          accessibilityLabel={isEdit ? '독후감 수정' : '독후감 작성'}
+        />
       </ScrollView>
 
       <Snackbar
@@ -270,94 +278,3 @@ export function ReviewFormScreen() {
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.shelfBrown,
-  },
-  scrollContent: {
-    padding: 20,
-    flexGrow: 1,
-  },
-  paperSheet: {
-    backgroundColor: colors.paper,
-    borderRadius: 2,
-    padding: 24,
-    marginBottom: 24,
-    minHeight: 400,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  heading: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: colors.textPrimary,
-    marginBottom: 24,
-    textAlign: 'center',
-
-    borderBottomWidth: 1,
-    borderBottomColor: colors.shelfHighlight,
-    paddingBottom: 16,
-  },
-  input: {
-    marginBottom: 8,
-    backgroundColor: 'transparent',
-    fontSize: 16,
-
-    color: colors.textPrimary,
-  },
-  contentInput: {
-    minHeight: 200,
-    lineHeight: 24,
-    textAlignVertical: 'top',
-  },
-  sectionLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.textSecondary,
-    marginTop: 12,
-    marginBottom: 8,
-
-  },
-  dateButton: {
-    borderBottomWidth: 1,
-    borderBottomColor: colors.shelfHighlight,
-    paddingVertical: 12,
-    marginBottom: 8,
-  },
-  dateButtonText: {
-    fontSize: 16,
-    color: colors.textPrimary,
-
-  },
-  pageRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  pageInput: {
-    flex: 1,
-    marginBottom: 0,
-  },
-  pageSeparator: {
-    fontSize: 16,
-    color: colors.textMuted,
-    marginHorizontal: 12,
-  },
-  button: {
-    backgroundColor: colors.shelfDark,
-    borderRadius: 8,
-    paddingVertical: 6,
-    elevation: 4,
-  },
-  buttonLabel: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: colors.warmWhite,
-
-  },
-});

@@ -13,9 +13,8 @@ export const styles = StyleSheet.create({
   },
   headerTitle: {
     color: colors.shelfBrown,
-    fontWeight: '700',
     fontSize: 20,
-    textAlign: 'center',
+    textAlign: 'left',
   },
   scrollContent: {
     paddingHorizontal: 20,
@@ -44,8 +43,7 @@ export const styles = StyleSheet.create({
     elevation: 2,
   },
   bookTitle: {
-    fontSize: 22,
-    fontWeight: '700',
+    fontSize: 20,
     color: colors.textPrimary,
     textAlign: 'center',
   },

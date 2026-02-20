@@ -48,6 +48,6 @@ src/
 - **테스트 실패 대응**: 테스트 실패 시 먼저 구현부 버그 여부를 분석한다. 구현부에 문제가 있으면 구현부를 수정한다. 테스트 코드 수정은 기능이 의도적으로 변경된 경우에만 허용하며, 반드시 사유를 설명한 후 진행한다.
 - **의존성**: Expo peer dep 충돌 시 `npm install --legacy-peer-deps`
 - **이미지 import**: 상대 경로 금지 → `@assets/*` 절대 경로 사용 (e.g. `require('@assets/login/login-image.webp')`)
-- **폰트**: 기본 폰트 Gowun Dodum (`@expo-google-fonts/gowun-dodum`). `_layout.tsx`에서 로드, `theme/index.ts`에서 `configureFonts`로 전역 적용
+- **폰트**: 기본 폰트 Gowun Dodum (`@expo-google-fonts/gowun-dodum`). `_layout.tsx`에서 로드, `theme/index.ts`에서 `configureFonts`로 전역 적용. **400 weight만 제공**하므로 `fontWeight: '700'` 등 굵기 지정 금지 (Android에서 시스템 폰트로 fallback됨). 굵기 강조는 `fontSize`나 `color` 대비로 대체
 - **스타일 분리**: `StyleSheet.create()`는 컴포넌트 파일과 분리하여 `*.styles.ts` 파일로 관리 (e.g. `AddBookModal.styles.ts`)
 - **커밋**: 한국어, 기능별 분리
