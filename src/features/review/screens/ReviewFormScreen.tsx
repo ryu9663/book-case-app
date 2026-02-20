@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -60,27 +60,36 @@ export function ReviewFormScreen() {
   const createReview = useReviewControllerCreate();
   const updateReview = useReviewControllerUpdate();
 
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  // refs로 텍스트 값 추적 (한글 IME 조합 깨짐 방지)
+  const titleRef = useRef('');
+  const contentRef = useRef('');
+  const startPageRef = useRef('');
+  const endPageRef = useRef('');
+
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();
-  const [startPage, setStartPage] = useState('');
-  const [endPage, setEndPage] = useState('');
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const [snackbar, setSnackbar] = useState('');
+  const [formKey, setFormKey] = useState(0);
 
   useEffect(() => {
     if (isEdit && existingReview) {
-      setTitle(existingReview.title);
-      setContent(existingReview.content);
+      titleRef.current = existingReview.title;
+      contentRef.current = existingReview.content;
+      startPageRef.current = String(existingReview.startPage);
+      endPageRef.current = String(existingReview.endPage);
       setStartDate(new Date(existingReview.startDate + 'T00:00:00'));
       setEndDate(new Date(existingReview.endDate + 'T00:00:00'));
-      setStartPage(String(existingReview.startPage));
-      setEndPage(String(existingReview.endPage));
+      setFormKey((prev) => prev + 1);
     }
   }, [existingReview, isEdit]);
 
   const handleSubmit = async () => {
+    const title = titleRef.current;
+    const content = contentRef.current;
+    const startPage = startPageRef.current;
+    const endPage = endPageRef.current;
+
     if (!title.trim() || !content.trim()) {
       setSnackbar('제목과 내용을 입력해주세요.');
       return;
@@ -171,14 +180,16 @@ export function ReviewFormScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.paperSheet}>
+        <View key={formKey} style={styles.paperSheet}>
           <Text style={styles.heading}>독후감 기록</Text>
 
           <TextInput
             testID="title-input"
             label="독후감 제목"
-            value={title}
-            onChangeText={setTitle}
+            defaultValue={titleRef.current}
+            onChangeText={(text) => {
+              titleRef.current = text;
+            }}
             mode="flat"
             underlineColor={colors.shelfHighlight}
             activeUnderlineColor={colors.shelfBrown}
@@ -218,8 +229,10 @@ export function ReviewFormScreen() {
             <TextInput
               testID="start-page-input"
               label="시작"
-              value={startPage}
-              onChangeText={(text) => setStartPage(text.replace(/[^0-9]/g, ''))}
+              defaultValue={startPageRef.current}
+              onChangeText={(text) => {
+                startPageRef.current = text.replace(/[^0-9]/g, '');
+              }}
               mode="flat"
               keyboardType="number-pad"
               underlineColor={colors.shelfHighlight}
@@ -231,8 +244,10 @@ export function ReviewFormScreen() {
             <TextInput
               testID="end-page-input"
               label="끝"
-              value={endPage}
-              onChangeText={(text) => setEndPage(text.replace(/[^0-9]/g, ''))}
+              defaultValue={endPageRef.current}
+              onChangeText={(text) => {
+                endPageRef.current = text.replace(/[^0-9]/g, '');
+              }}
               mode="flat"
               keyboardType="number-pad"
               underlineColor={colors.shelfHighlight}
@@ -245,8 +260,10 @@ export function ReviewFormScreen() {
           <TextInput
             testID="content-input"
             label="내용을 작성하세요..."
-            value={content}
-            onChangeText={setContent}
+            defaultValue={contentRef.current}
+            onChangeText={(text) => {
+              contentRef.current = text;
+            }}
             mode="flat"
             multiline
             numberOfLines={15}

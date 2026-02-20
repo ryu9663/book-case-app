@@ -229,11 +229,19 @@ describe('ReviewFormScreen', () => {
 
     render(<ReviewFormScreen />);
 
-    // 기존 데이터 복원 확인
-    expect(screen.getByTestId('title-input').props.value).toBe('기존 제목');
-    expect(screen.getByTestId('content-input').props.value).toBe('기존 내용');
-    expect(screen.getByTestId('start-page-input').props.value).toBe('10');
-    expect(screen.getByTestId('end-page-input').props.value).toBe('200');
+    // 기존 데이터 복원 확인 (uncontrolled: defaultValue로 검증)
+    expect(screen.getByTestId('title-input').props.defaultValue).toBe(
+      '기존 제목',
+    );
+    expect(screen.getByTestId('content-input').props.defaultValue).toBe(
+      '기존 내용',
+    );
+    expect(screen.getByTestId('start-page-input').props.defaultValue).toBe(
+      '10',
+    );
+    expect(screen.getByTestId('end-page-input').props.defaultValue).toBe(
+      '200',
+    );
     expect(screen.getByText('2026.01.01 ~ 2026.01.31')).toBeTruthy();
 
     // 제목만 수정 후 제출
