@@ -25,7 +25,7 @@ src/
 │   ├── book/             # 책 상세, 추가
 │   ├── bookshelf/        # 책장 그리드
 │   ├── calendar/         # 독서 캘린더 (hooks, utils, types 분리)
-│   └── review/           # 독후감 CRUD
+│   └── review/           # 독후감 CRUD, headerOptions.tsx (Stack.Screen 헤더 프리셋)
 ├── api/generated/        # Orval 자동 생성 (직접 수정 금지)
 ├── components/ui/        # 공통 UI (LoadingScreen, ErrorScreen, EmptyState, ConfirmDialog)
 └── lib/
