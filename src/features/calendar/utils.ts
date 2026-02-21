@@ -40,6 +40,7 @@ export function buildDateToBookMap(
         reviewContent: review.content,
         startPage: review.startPage,
         endPage: review.endPage,
+        sticker: (review as any).sticker,
       };
 
       const dates = getDateRange(review.startDate, review.endDate);

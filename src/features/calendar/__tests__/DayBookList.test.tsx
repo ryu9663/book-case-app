@@ -10,8 +10,16 @@ jest.mock('@/lib/theme/colors', () => ({
     textMuted: '#8D6E63',
     warmWhite: '#FAF3E0',
     shelfBrown: '#5D4037',
+    accentGreen: '#4CAF50',
   },
   getSpineColor: () => '#AA5533',
+}));
+
+jest.mock('@/features/review/components/stickers', () => ({
+  StickerIcon: ({ type, size }: { type: string; size: number }) => {
+    const { Text } = require('react-native');
+    return <Text testID={`sticker-${type}`}>{type}</Text>;
+  },
 }));
 
 const mockPush = jest.fn();
@@ -125,5 +133,35 @@ describe('DayBookList', () => {
     );
     // book2의 reviewContent가 빈 문자열이므로 미리보기 없음
     expect(queryByText('p.50 - p.150')).toBeTruthy();
+  });
+
+  it('스티커가 있으면 무드 스티커 아이콘 표시', () => {
+    const bookWithSticker: CalendarBookInfo[] = [
+      { ...books[0], sticker: 'sparkle' },
+    ];
+    const { getByTestId } = render(
+      <DayBookList selectedDate="2024-01-15" books={bookWithSticker} />,
+    );
+    expect(getByTestId('sticker-sparkle')).toBeTruthy();
+  });
+
+  it('스티커가 없으면 무드 스티커 아이콘 미표시', () => {
+    const { queryByTestId } = render(
+      <DayBookList selectedDate="2024-01-15" books={books} />,
+    );
+    expect(queryByTestId('sticker-sparkle')).toBeNull();
+    expect(queryByTestId('sticker-plant')).toBeNull();
+  });
+
+  it('스티커 종류별로 카드 배경색이 다름', () => {
+    const moodBooks: CalendarBookInfo[] = [
+      { ...books[0], reviewId: 1, sticker: 'sparkle' },
+      { ...books[0], reviewId: 2, sticker: 'moon' },
+    ];
+    const { getByTestId } = render(
+      <DayBookList selectedDate="2024-01-15" books={moodBooks} />,
+    );
+    expect(getByTestId('sticker-sparkle')).toBeTruthy();
+    expect(getByTestId('sticker-moon')).toBeTruthy();
   });
 });

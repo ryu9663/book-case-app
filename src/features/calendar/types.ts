@@ -1,3 +1,5 @@
+import type { CreateReviewDtoSticker } from '@/api/generated/models';
+
 export interface CalendarBookInfo {
   bookId: number;
   title: string;
@@ -8,6 +10,7 @@ export interface CalendarBookInfo {
   reviewContent: string;
   startPage: number;
   endPage: number;
+  sticker?: CreateReviewDtoSticker;
 }
 
 export interface CalendarDayData {
