@@ -25,8 +25,10 @@ import {
   getReviewControllerFindAllQueryKey,
   getReviewControllerFindOneQueryKey,
 } from '@/api/generated/reviews/reviews';
+import type { CreateReviewDtoSticker } from '@/api/generated/models';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { colors } from '@/lib/theme/colors';
+import { StickerSelector } from '../components/StickerSelector';
 import { styles } from './ReviewFormScreen.style';
 
 function formatDate(date: Date): string {
@@ -66,6 +68,7 @@ export function ReviewFormScreen() {
   const startPageRef = useRef('');
   const endPageRef = useRef('');
 
+  const [sticker, setSticker] = useState<CreateReviewDtoSticker | null>(null);
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();
   const [datePickerOpen, setDatePickerOpen] = useState(false);
@@ -78,6 +81,14 @@ export function ReviewFormScreen() {
       contentRef.current = existingReview.content;
       startPageRef.current = String(existingReview.startPage);
       endPageRef.current = String(existingReview.endPage);
+      const reviewSticker = (
+        existingReview as typeof existingReview & {
+          sticker?: CreateReviewDtoSticker;
+        }
+      ).sticker;
+      if (reviewSticker) {
+        setSticker(reviewSticker);
+      }
       setStartDate(new Date(existingReview.startDate + 'T00:00:00'));
       setEndDate(new Date(existingReview.endDate + 'T00:00:00'));
       setFormKey((prev) => prev + 1);
@@ -92,6 +103,10 @@ export function ReviewFormScreen() {
 
     if (!title.trim() || !content.trim()) {
       setSnackbar('제목과 내용을 입력해주세요.');
+      return;
+    }
+    if (!sticker) {
+      setSnackbar('무드 스티커를 선택해주세요.');
       return;
     }
     if (!startDate || !endDate) {
@@ -130,6 +145,7 @@ export function ReviewFormScreen() {
             endDate: formatDate(endDate),
             startPage: numberedStartPage,
             endPage: numberedEndPage,
+            sticker,
           },
         });
         setSnackbar('수정되었습니다.');
@@ -143,6 +159,7 @@ export function ReviewFormScreen() {
             endDate: formatDate(endDate),
             startPage: numberedStartPage,
             endPage: numberedEndPage,
+            sticker,
           },
         });
         setSnackbar('독후감이 작성되었습니다!');
@@ -196,6 +213,9 @@ export function ReviewFormScreen() {
             style={styles.input}
             theme={{ colors: { background: 'transparent' } }}
           />
+
+          <Text style={styles.sectionLabel}>무드 스티커</Text>
+          <StickerSelector selected={sticker} onSelect={setSticker} />
 
           <Text style={styles.sectionLabel}>독서 기간</Text>
           <TouchableOpacity

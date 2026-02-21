@@ -85,6 +85,25 @@ jest.mock('@/components/ui/LoadingScreen', () => ({
   },
 }));
 
+jest.mock('../../components/StickerSelector', () => {
+  const { View, TouchableOpacity, Text } = require('react-native');
+  return {
+    StickerSelector: ({ selected, onSelect }: any) => (
+      <View testID="sticker-selector">
+        {['sparkle', 'plant', 'coffee', 'moon'].map((type: string) => (
+          <TouchableOpacity
+            key={type}
+            testID={`sticker-${type}`}
+            onPress={() => onSelect(type)}
+          >
+            <Text>{selected === type ? `[${type}]` : type}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    ),
+  };
+});
+
 jest.mock('@/lib/theme/colors', () => ({
   colors: {
     shelfBrown: '#5D4037',
@@ -115,6 +134,7 @@ describe('ReviewFormScreen', () => {
     render(<ReviewFormScreen />);
 
     expect(screen.getByTestId('title-input')).toBeTruthy();
+    expect(screen.getByTestId('sticker-selector')).toBeTruthy();
     expect(screen.getByTestId('content-input')).toBeTruthy();
     expect(screen.getByTestId('date-range-button')).toBeTruthy();
     expect(screen.getByTestId('start-page-input')).toBeTruthy();
@@ -130,11 +150,23 @@ describe('ReviewFormScreen', () => {
     expect(mockCreateMutateAsync).not.toHaveBeenCalled();
   });
 
+  it('스티커 미선택이면 스낵바 에러를 표시한다', () => {
+    render(<ReviewFormScreen />);
+
+    fireEvent.changeText(screen.getByTestId('title-input'), '테스트 제목');
+    fireEvent.changeText(screen.getByTestId('content-input'), '테스트 내용');
+    fireEvent.press(screen.getByLabelText('독후감 작성'));
+
+    expect(screen.getByText('무드 스티커를 선택해주세요.')).toBeTruthy();
+    expect(mockCreateMutateAsync).not.toHaveBeenCalled();
+  });
+
   it('날짜 미선택이면 스낵바 에러를 표시한다', () => {
     render(<ReviewFormScreen />);
 
     fireEvent.changeText(screen.getByTestId('title-input'), '테스트 제목');
     fireEvent.changeText(screen.getByTestId('content-input'), '테스트 내용');
+    fireEvent.press(screen.getByTestId('sticker-sparkle'));
     fireEvent.changeText(screen.getByTestId('start-page-input'), '1');
     fireEvent.changeText(screen.getByTestId('end-page-input'), '100');
     fireEvent.press(screen.getByLabelText('독후감 작성'));
@@ -148,6 +180,7 @@ describe('ReviewFormScreen', () => {
 
     fireEvent.changeText(screen.getByTestId('title-input'), '테스트 제목');
     fireEvent.changeText(screen.getByTestId('content-input'), '테스트 내용');
+    fireEvent.press(screen.getByTestId('sticker-sparkle'));
     // 날짜 선택
     fireEvent.press(screen.getByTestId('date-range-button'));
     fireEvent.press(screen.getByTestId('date-picker-confirm'));
@@ -162,12 +195,13 @@ describe('ReviewFormScreen', () => {
     expect(mockCreateMutateAsync).not.toHaveBeenCalled();
   });
 
-  it('생성 모드: 6개 필드를 포함해서 mutateAsync를 호출한다', async () => {
+  it('생성 모드: 7개 필드를 포함해서 mutateAsync를 호출한다', async () => {
     mockCreateMutateAsync.mockResolvedValueOnce({});
     render(<ReviewFormScreen />);
 
     fireEvent.changeText(screen.getByTestId('title-input'), '테스트 제목');
     fireEvent.changeText(screen.getByTestId('content-input'), '테스트 내용');
+    fireEvent.press(screen.getByTestId('sticker-plant'));
     // 날짜 선택
     fireEvent.press(screen.getByTestId('date-range-button'));
     fireEvent.press(screen.getByTestId('date-picker-confirm'));
@@ -187,6 +221,7 @@ describe('ReviewFormScreen', () => {
           endDate: '2026-02-15',
           startPage: 1,
           endPage: 150,
+          sticker: 'plant',
         },
       });
     });
@@ -197,6 +232,7 @@ describe('ReviewFormScreen', () => {
 
     fireEvent.changeText(screen.getByTestId('title-input'), '테스트 제목');
     fireEvent.changeText(screen.getByTestId('content-input'), '테스트 내용');
+    fireEvent.press(screen.getByTestId('sticker-sparkle'));
     // 날짜 역순 선택: startDate > endDate
     fireEvent.press(screen.getByTestId('date-range-button'));
     mockDatePickerOnConfirm!({
@@ -224,6 +260,7 @@ describe('ReviewFormScreen', () => {
       endDate: '2026-01-31',
       startPage: 10,
       endPage: 200,
+      sticker: 'coffee',
     };
     mockUpdateMutateAsync.mockResolvedValueOnce({});
 
@@ -243,6 +280,8 @@ describe('ReviewFormScreen', () => {
       '200',
     );
     expect(screen.getByText('2026.01.01 ~ 2026.01.31')).toBeTruthy();
+    // 스티커 복원 확인
+    expect(screen.getByText('[coffee]')).toBeTruthy();
 
     // 제목만 수정 후 제출
     fireEvent.changeText(screen.getByTestId('title-input'), '수정된 제목');
@@ -259,6 +298,7 @@ describe('ReviewFormScreen', () => {
           endDate: '2026-01-31',
           startPage: 10,
           endPage: 200,
+          sticker: 'coffee',
         },
       });
     });
