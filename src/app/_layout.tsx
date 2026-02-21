@@ -32,7 +32,7 @@ function AuthGate() {
     const inAuth = segments[0] === '(auth)';
 
     if (!user && !inAuth) {
-      router.dismissAll();
+      if (router.canDismiss()) router.dismissAll();
       router.replace('/(auth)/login');
     } else if (user && inAuth) {
       router.replace('/(main)');
