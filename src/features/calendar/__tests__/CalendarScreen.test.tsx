@@ -256,7 +256,9 @@ describe('CalendarScreen', () => {
     fireEvent.press(getByText('15'));
     fireEvent.press(getByText('책1'));
 
-    expect(mockPush).toHaveBeenCalledWith('/(main)/(bookshelf)/book/1');
+    expect(mockPush).toHaveBeenCalledWith(
+      '/(main)/(bookshelf)/review/10?bookId=1',
+    );
   });
 
   it('데이터가 없는 날짜를 탭하면 빈 상태 메시지 표시', () => {

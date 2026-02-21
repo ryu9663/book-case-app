@@ -48,7 +48,9 @@ export function DayBookList({ selectedDate, books }: DayBookListProps) {
               key={book.reviewId}
               style={[styles.bookItem, { backgroundColor: mood.cardBg }]}
               onPress={() =>
-                router.push(`/(main)/(bookshelf)/book/${book.bookId}`)
+                router.push(
+                  `/(main)/(bookshelf)/review/${book.reviewId}?bookId=${book.bookId}`,
+                )
               }
             >
               <View

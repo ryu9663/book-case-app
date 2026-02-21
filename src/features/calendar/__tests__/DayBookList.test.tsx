@@ -88,12 +88,14 @@ describe('DayBookList', () => {
     expect(getByText('저자2')).toBeTruthy();
   });
 
-  it('책을 탭하면 BookDetail로 네비게이션', () => {
+  it('책을 탭하면 ReviewFormScreen으로 네비게이션', () => {
     const { getByText } = render(
       <DayBookList selectedDate="2024-01-15" books={books} />,
     );
     fireEvent.press(getByText('책1'));
-    expect(mockPush).toHaveBeenCalledWith('/(main)/(bookshelf)/book/1');
+    expect(mockPush).toHaveBeenCalledWith(
+      '/(main)/(bookshelf)/review/10?bookId=1',
+    );
   });
 
   it('썸네일이 있으면 Image 렌더링', () => {
