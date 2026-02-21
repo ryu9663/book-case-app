@@ -27,7 +27,7 @@ export function MoonIcon({
       />
       {/* Crescent moon */}
       <Path
-        d="M 43 22 A 18 18 0 1 0 43 58 A 14 14 0 1 1 43 22 Z"
+        d="M 35 24 C 49 22, 58 31, 57 41 C 56 51, 47 59, 35 57 C 42 52, 46 47, 46 41 C 46 35, 42 29, 35 24 Z"
         fill={ICON_COLOR}
       />
     </Svg>
