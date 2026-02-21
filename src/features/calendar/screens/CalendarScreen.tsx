@@ -10,6 +10,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { useCalendarData } from '../hooks/useCalendarData';
 import { CalendarDayCell } from '../components/CalendarDayCell';
 import { DayBookList } from '../components/DayBookList';
+import { styles } from './CalendarScreen.style';
 
 LocaleConfig.locales['ko'] = {
   monthNames: [
@@ -122,26 +123,3 @@ export function CalendarScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.cream,
-  },
-  header: {
-    paddingHorizontal: 24,
-    paddingBottom: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.3)',
-    zIndex: 20,
-  },
-  headerTitle: {
-    fontSize: 22,
-    color: colors.shelfBrown,
-  },
-  scroll: {
-    flex: 1,
-  },
-});
