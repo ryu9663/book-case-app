@@ -8,6 +8,7 @@ import {
 } from 'react';
 import type { UserResponseDto } from '@/api/generated/models';
 import type { AuthTokens } from '@/features/auth/api';
+import { useForceLogout } from '@/lib/api/auth-session';
 import { storage } from '@/lib/utils/storage';
 
 interface AuthState {
@@ -63,13 +64,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [],
   );
 
-  const logout = useCallback(async () => {
+  const logout = async () => {
     await storage.clear();
     setUser(null);
-  }, []);
+  };
+
+  useForceLogout(logout);
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, loginWithUser, logout }}>
+    <AuthContext.Provider
+      value={{ user, isLoading, login, loginWithUser, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

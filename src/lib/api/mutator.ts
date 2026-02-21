@@ -1,6 +1,6 @@
 import Axios, { AxiosRequestConfig } from 'axios';
-import { router } from 'expo-router';
 import { Alert } from 'react-native';
+import { forceLogout } from '@/lib/api/auth-session';
 import { storage } from '@/lib/utils/storage';
 
 const REFRESH_URL = '/auth/refresh';
@@ -65,9 +65,8 @@ const getNewAccessToken = async (): Promise<string | void> => {
 
       return accessToken;
     } catch {
-      await storage.clear();
       Alert.alert('세션 만료', '다시 로그인해주세요.', [
-        { text: '확인', onPress: () => router.replace('/(auth)/login') },
+        { text: '확인', onPress: () => forceLogout() },
       ]);
     } finally {
       refreshPromise = null;
