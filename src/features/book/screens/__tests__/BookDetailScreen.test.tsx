@@ -384,7 +384,7 @@ describe('BookDetailScreen', () => {
       fireEvent.press(screen.getByTestId('fab-add-review'));
 
       expect(router.push).toHaveBeenCalledWith(
-        '/(main)/(bookshelf)/review/create?bookId=1',
+        '/review/create?bookId=1',
       );
     });
   });

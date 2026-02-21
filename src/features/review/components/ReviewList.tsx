@@ -73,7 +73,7 @@ export function ReviewList({ bookId }: Props) {
             review={review}
             onEdit={() =>
               router.push(
-                `/(main)/(bookshelf)/review/${review.id}?bookId=${bookId}`,
+                `/review/${review.id}?bookId=${bookId}`,
               )
             }
             onDelete={() => {

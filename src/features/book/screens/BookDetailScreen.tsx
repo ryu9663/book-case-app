@@ -132,7 +132,7 @@ export function BookDetailScreen() {
         style={styles.fab}
         color="#fff"
         onPress={() =>
-          router.push(`/(main)/(bookshelf)/review/create?bookId=${bookId}`)
+          router.push(`/review/create?bookId=${bookId}`)
         }
         accessibilityLabel="독후감 작성"
       />

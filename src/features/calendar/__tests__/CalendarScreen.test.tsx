@@ -257,7 +257,7 @@ describe('CalendarScreen', () => {
     fireEvent.press(getByText('책1'));
 
     expect(mockPush).toHaveBeenCalledWith(
-      '/(main)/(bookshelf)/review/10?bookId=1',
+      '/review/10?bookId=1',
     );
   });
 

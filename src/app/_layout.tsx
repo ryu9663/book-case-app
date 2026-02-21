@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Slot, useRouter, useSegments } from 'expo-router';
+import { Stack, useRouter, useSegments } from 'expo-router';
 import { PaperProvider } from 'react-native-paper';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -32,6 +32,7 @@ function AuthGate() {
     const inAuth = segments[0] === '(auth)';
 
     if (!user && !inAuth) {
+      router.dismissAll();
       router.replace('/(auth)/login');
     } else if (user && inAuth) {
       router.replace('/(main)');
@@ -46,7 +47,7 @@ function AuthGate() {
 
   if (isLoading) return <LoadingScreen />;
 
-  return <Slot />;
+  return <Stack screenOptions={{ headerShown: false }} />;
 }
 
 export default function RootLayout() {
