@@ -18,6 +18,13 @@ jest.mock('@/lib/theme/colors', () => ({
   },
 }));
 
+jest.mock('../stickers', () => ({
+  StickerIcon: ({ type, size }: { type: string; size: number }) => {
+    const { View } = require('react-native');
+    return <View testID={`sticker-icon-${type}`} />;
+  },
+}));
+
 const mockReview: ReviewResponseDto = {
   id: 1,
   title: '테스트 독후감',
@@ -123,6 +130,33 @@ describe('ReviewCard', () => {
 
     const content = screen.getByTestId('review-content');
     expect(content.props.numberOfLines).toBe(3);
+  });
+
+  describe('무드 스티커', () => {
+    it('sticker가 있으면 스티커 아이콘이 렌더링된다', () => {
+      const review = { ...mockReview, sticker: 'sparkle' as const };
+      render(
+        <ReviewCard
+          review={review}
+          onEdit={mockOnEdit}
+          onDelete={mockOnDelete}
+        />,
+      );
+
+      expect(screen.getByTestId('sticker-icon-sparkle')).toBeTruthy();
+    });
+
+    it('sticker가 없으면 스티커 아이콘이 렌더링되지 않는다', () => {
+      render(
+        <ReviewCard
+          review={mockReview}
+          onEdit={mockOnEdit}
+          onDelete={mockOnDelete}
+        />,
+      );
+
+      expect(screen.queryByTestId(/sticker-icon/)).toBeNull();
+    });
   });
 
   describe('접근성', () => {
