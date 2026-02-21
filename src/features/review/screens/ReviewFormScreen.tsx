@@ -1,20 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import {
   View,
-  StyleSheet,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import {
-  TextInput,
-  Button,
-  Text,
-  Snackbar,
-  Icon,
-  FAB,
-} from 'react-native-paper';
+import { TextInput, Text, Snackbar, Icon, FAB } from 'react-native-paper';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { DatePickerModal } from 'react-native-paper-dates';
