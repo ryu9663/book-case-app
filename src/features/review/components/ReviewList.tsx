@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { Text, Snackbar } from 'react-native-paper';
 import { router } from 'expo-router';
 import { ReviewCard } from './ReviewCard';
@@ -12,7 +12,6 @@ import {
 import { useQueryClient } from '@tanstack/react-query';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { colors } from '@/lib/theme/colors';
 import type { ReviewResponseDto } from '@/api/generated/models';
 import { styles } from './ReviewList.styles';
 

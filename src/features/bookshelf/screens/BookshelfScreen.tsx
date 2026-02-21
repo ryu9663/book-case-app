@@ -4,7 +4,6 @@ import {
   ScrollView,
   RefreshControl,
   Pressable,
-  ImageBackground,
   useWindowDimensions,
 } from 'react-native';
 import { Text, Snackbar } from 'react-native-paper';
